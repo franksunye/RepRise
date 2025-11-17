@@ -106,6 +106,7 @@ export default function RepDetailPage() {
         <CardContent className="pt-6">
           <div className="flex items-start gap-6">
             <Avatar className="h-20 w-20">
+              <AvatarImage src={getRealisticAvatarUrl(rep.name)} alt={rep.name} />
               <AvatarFallback className="bg-primary/10 text-primary font-medium text-2xl">
                 {getInitials(rep.name)}
               </AvatarFallback>

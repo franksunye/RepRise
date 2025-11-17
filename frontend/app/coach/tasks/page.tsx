@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { getRealisticAvatarUrl, getInitials } from '@/lib/avatar';
 import {
   Plus,
   Clock,
@@ -164,8 +165,9 @@ export default function CoachTasksPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3 flex-1">
                       <Avatar className="h-10 w-10">
+                        <AvatarImage src={getRealisticAvatarUrl(task.repName)} alt={task.repName} />
                         <AvatarFallback className="bg-primary/10 text-primary font-medium">
-                          {task.repName.charAt(0)}
+                          {getInitials(task.repName)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
@@ -227,8 +229,9 @@ export default function CoachTasksPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3 flex-1">
                       <Avatar className="h-10 w-10">
+                        <AvatarImage src={getRealisticAvatarUrl(task.repName)} alt={task.repName} />
                         <AvatarFallback className="bg-primary/10 text-primary font-medium">
-                          {task.repName.charAt(0)}
+                          {getInitials(task.repName)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
@@ -288,7 +291,8 @@ export default function CoachTasksPage() {
                       <div className="flex items-start gap-3 flex-1">
                         <Avatar className="h-10 w-10">
                           <AvatarFallback className="bg-red-100 text-red-600 font-medium">
-                            {task.repName.charAt(0)}
+                          <AvatarImage src={getRealisticAvatarUrl(task.repName)} alt={task.repName} />
+                            {getInitials(task.repName)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
