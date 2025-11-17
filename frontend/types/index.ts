@@ -1,0 +1,101 @@
+// 用户角色
+export type UserRole = 'rep' | 'coach' | 'admin';
+
+// 管家（销售代表）
+export interface Rep {
+  id: string;
+  name: string;
+  avatar?: string;
+  role: 'rep';
+  joinDate: string;
+  email: string;
+  phone: string;
+  status: 'active' | 'inactive';
+  coachId?: string;
+}
+
+// 教练
+export interface Coach {
+  id: string;
+  name: string;
+  avatar?: string;
+  role: 'coach';
+  email: string;
+  phone: string;
+  reps: string[]; // Rep IDs
+}
+
+// 练习类型
+export type PracticeType = 'cold-call' | 'follow-up' | 'on-site' | 'pricing' | 'objection';
+
+// 练习记录
+export interface Practice {
+  id: string;
+  repId: string;
+  type: PracticeType;
+  title: string;
+  description: string;
+  date: string;
+  duration: number; // 分钟
+  score: number; // 0-100
+  feedback: string;
+  coachFeedback?: string;
+  reflection?: string;
+  status: 'completed' | 'in-progress' | 'pending';
+  scores: {
+    professionalism: number;
+    communication: number;
+    timeManagement: number;
+    objectionHandling: number;
+  };
+}
+
+// 辅导任务
+export interface CoachingTask {
+  id: string;
+  repId: string;
+  coachId: string;
+  title: string;
+  description: string;
+  type: PracticeType;
+  dueDate: string;
+  status: 'pending' | 'in-progress' | 'completed' | 'overdue';
+  priority: 'low' | 'medium' | 'high';
+  createdAt: string;
+}
+
+// 内容库项目
+export interface PlaybookItem {
+  id: string;
+  title: string;
+  category: 'script' | 'template' | 'checklist' | 'objection-handling';
+  content: string;
+  version: string;
+  author: string;
+  lastUpdated: string;
+  tags: string[];
+  downloads: number;
+}
+
+// KPI 数据
+export interface KPIData {
+  repId: string;
+  period: string; // 'week' | 'month' | 'quarter'
+  practiceCount: number;
+  averageScore: number;
+  onSiteSuccessRate: number; // 上门成功率
+  pricingConversionRate: number; // 报价转化率
+  dealCloseRate: number; // 成交率
+}
+
+// 通知
+export interface Notification {
+  id: string;
+  userId: string;
+  type: 'task' | 'feedback' | 'reminder' | 'achievement';
+  title: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  link?: string;
+}
