@@ -32,7 +32,7 @@ export function CoachHome() {
   const inProgressTasks = allTasks.filter(t => t.status === 'in-progress');
   const overdueTasks = allTasks.filter(t => {
     const dueDate = new Date(t.dueDate);
-    return dueDate < new Date() && t.status \!== 'completed';
+    return dueDate < new Date() && t.status !== 'completed';
   });
   
   // 获取管家的练习数据
@@ -257,7 +257,7 @@ export function CoachHome() {
               {/* Recent Tasks List */}
               {allTasks.slice(0, 3).map((task) => {
                 const rep = myReps.find(r => r.id === task.repId);
-                const isOverdue = new Date(task.dueDate) < new Date() && task.status \!== 'completed';
+                const isOverdue = new Date(task.dueDate) < new Date() && task.status !== 'completed';
                 
                 return (
                   <div key={task.id} className="flex items-start gap-3 p-3 border rounded-lg">
@@ -295,7 +295,7 @@ export function CoachHome() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {repPractices
-              .filter(r => \!r.needsAttention)
+              .filter(r => !r.needsAttention)
               .sort((a, b) => b.averageScore - a.averageScore)
               .slice(0, 3)
               .map((rep, index) => (
