@@ -1,4 +1,4 @@
-import { Rep, Coach, Practice, CoachingTask, PlaybookItem, KPIData, Notification } from '@/types';
+import { Rep, Coach, Practice, CoachingTask, PlaybookItem, KPIData, Notification, LearningPath, Course, UserCourseProgress } from '@/types';
 
 // 管家数据
 export const mockReps: Rep[] = [
@@ -284,3 +284,167 @@ export const getUserKPI = (userId: string, period: string) =>
 // 获取用户的通知
 export const getUserNotifications = (userId: string) => 
   mockNotifications.filter(n => n.userId === userId);
+
+
+// 学习路径
+export const mockLearningPaths: LearningPath[] = [
+  {
+    id: 'path-1',
+    title: '新管家入职路径',
+    description: '帮助新入职管家快速掌握防水维修服务的基础知识和销售技能',
+    targetRole: 'rep' as const,
+    courses: ['course-1', 'course-2', 'course-3', 'course-4'],
+    estimatedDuration: 120,
+  },
+];
+
+// 课程
+export const mockCourses: Course[] = [
+  {
+    id: 'course-1',
+    pathId: 'path-1',
+    title: '漏水类型识别',
+    description: '学习识别常见的漏水类型，为客户提供专业诊断',
+    duration: 30,
+    order: 1,
+    objectives: [
+      '了解常见漏水类型及其特征',
+      '掌握漏水原因分析方法',
+      '学会向客户解释漏水问题',
+    ],
+    keyPoints: [
+      '屋顶漏水',
+      '墙体渗水',
+      '管道漏水',
+      '地下室渗水',
+    ],
+    content: '# 漏水类型识别\n\n作为防水维修服务的管家，准确识别漏水类型是提供专业服务的第一步。\n\n## 1. 屋顶漏水\n特征：天花板出现水渍或霉斑，雨天或雨后漏水加重。\n\n## 2. 墙体渗水\n特征：墙面出现潮湿、发霉，墙纸脱落或起泡。\n\n## 3. 管道漏水\n特征：持续性漏水，与天气无关，水表持续走动。\n\n## 4. 地下室渗水\n特征：地下室墙面或地面潮湿，雨季或地下水位高时加重。',
+  },
+  {
+    id: 'course-2',
+    pathId: 'path-1',
+    title: '维修流程介绍',
+    description: '了解从接单到完工的完整服务流程',
+    duration: 25,
+    order: 2,
+    objectives: [
+      '掌握标准服务流程',
+      '了解每个环节的关键要点',
+      '学会向客户介绍服务流程',
+    ],
+    keyPoints: [
+      '接单与预约',
+      '上门勘查',
+      '方案制定',
+      '施工与验收',
+    ],
+    content: '# 维修流程介绍\n\n完整的服务流程包括：接单与预约、上门勘查、方案制定与报价、施工实施、验收与交付。\n\n每个环节都需要专业的态度和良好的沟通。',
+  },
+  {
+    id: 'course-3',
+    pathId: 'path-1',
+    title: '报价基础知识',
+    description: '掌握报价原则和技巧，提高成交率',
+    duration: 35,
+    order: 3,
+    objectives: [
+      '了解报价构成要素',
+      '掌握报价沟通技巧',
+      '学会处理价格异议',
+    ],
+    keyPoints: [
+      '报价构成',
+      '价值呈现',
+      '异议处理',
+      '成交技巧',
+    ],
+    content: '# 报价基础知识\n\n报价不仅是数字，更是价值沟通。\n\n## 报价构成\n包括材料成本、人工成本和其他成本。\n\n## 价值呈现\n强调解决方案的价值，而不仅仅是价格。',
+  },
+  {
+    id: 'course-4',
+    pathId: 'path-1',
+    title: '客户沟通技巧',
+    description: '提升沟通能力，建立客户信任',
+    duration: 30,
+    order: 4,
+    objectives: [
+      '掌握有效沟通技巧',
+      '学会倾听和提问',
+      '建立客户信任关系',
+    ],
+    keyPoints: [
+      '倾听技巧',
+      '提问技巧',
+      '同理心沟通',
+      '信任建立',
+    ],
+    content: '# 客户沟通技巧\n\n优秀的沟通能力是成功的关键。\n\n## 倾听技巧\n全神贯注，积极回应，确认理解。\n\n## 提问技巧\n使用开放式和封闭式提问，引导客户表达需求。',
+  },
+];
+
+// 用户学习进度
+export const mockUserProgress: UserCourseProgress[] = [
+  {
+    userId: 'rep-1',
+    courseId: 'course-1',
+    status: 'completed' as const,
+    progress: 100,
+    startedAt: '2024-11-10T09:00:00',
+    completedAt: '2024-11-10T09:35:00',
+    lastAccessedAt: '2024-11-10T09:35:00',
+  },
+  {
+    userId: 'rep-1',
+    courseId: 'course-2',
+    status: 'completed' as const,
+    progress: 100,
+    startedAt: '2024-11-11T10:00:00',
+    completedAt: '2024-11-11T10:30:00',
+    lastAccessedAt: '2024-11-11T10:30:00',
+  },
+  {
+    userId: 'rep-1',
+    courseId: 'course-3',
+    status: 'in-progress' as const,
+    progress: 60,
+    startedAt: '2024-11-12T14:00:00',
+    lastAccessedAt: '2024-11-15T16:20:00',
+  },
+  {
+    userId: 'rep-1',
+    courseId: 'course-4',
+    status: 'not-started' as const,
+    progress: 0,
+  },
+];
+
+// 获取学习路径
+export const getLearningPath = (pathId: string) =>
+  mockLearningPaths.find(p => p.id === pathId);
+
+// 获取课程
+export const getCourse = (courseId: string) =>
+  mockCourses.find(c => c.id === courseId);
+
+// 获取用户在某个课程的进度
+export const getUserCourseProgress = (userId: string, courseId: string) =>
+  mockUserProgress.find(p => p.userId === userId && p.courseId === courseId) || {
+    userId,
+    courseId,
+    status: 'not-started' as const,
+    progress: 0,
+  };
+
+// 获取用户在学习路径中的总进度
+export const getUserPathProgress = (userId: string, pathId: string) => {
+  const path = getLearningPath(pathId);
+  if (!path) return 0;
+  
+  const courseProgresses = path.courses.map(courseId => 
+    getUserCourseProgress(userId, courseId).progress
+  );
+  
+  return Math.round(
+    courseProgresses.reduce((sum, progress) => sum + progress, 0) / path.courses.length
+  );
+};

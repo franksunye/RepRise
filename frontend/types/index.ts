@@ -100,5 +100,39 @@ export interface Notification {
   link?: string;
 }
 
+// 学习路径
+export interface LearningPath {
+  id: string;
+  title: string;
+  description: string;
+  targetRole: UserRole;
+  courses: string[]; // Course IDs
+  estimatedDuration: number; // 总时长（分钟）
+}
+
+// 课程
+export interface Course {
+  id: string;
+  pathId: string;
+  title: string;
+  description: string;
+  duration: number; // 分钟
+  order: number; // 课程顺序
+  content: string; // 课程内容（Markdown格式）
+  objectives: string[]; // 学习目标
+  keyPoints: string[]; // 关键要点
+}
+
+// 用户学习进度
+export interface UserCourseProgress {
+  userId: string;
+  courseId: string;
+  status: 'not-started' | 'in-progress' | 'completed';
+  progress: number; // 0-100
+  startedAt?: string;
+  completedAt?: string;
+  lastAccessedAt?: string;
+}
+
 // 用户类型（联合类型）
 export type User = Rep | Coach;
