@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { getUserNotifications, mockReps, mockCoaches } from '@/data/mock-data';
 import { useRole } from '@/contexts/role-context';
 import { UserRole } from '@/types';
+import Link from 'next/link';
 
 export function Header() {
   const { currentRole, setCurrentRole } = useRole();
@@ -36,17 +37,19 @@ export function Header() {
       {/* Actions */}
       <div className="flex items-center gap-4">
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          {unreadCount > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-            >
-              {unreadCount}
-            </Badge>
-          )}
-        </Button>
+        <Link href="/notifications">
+          <Button variant="ghost" size="icon" className="relative">
+            <Bell className="h-5 w-5" />
+            {unreadCount > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+              >
+                {unreadCount}
+              </Badge>
+            )}
+          </Button>
+        </Link>
 
         {/* Role Switcher */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100">
