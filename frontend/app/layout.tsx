@@ -2,6 +2,7 @@ import './globals.css';
 import type { ReactNode } from 'react';
 import { Sidebar } from '@/components/sidebar';
 import { Header } from '@/components/header';
+import { RoleProvider } from '@/contexts/role-context';
 
 export const metadata = {
   title: 'RepRise - 管家销售使能平台',
@@ -12,18 +13,20 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="zh-CN">
       <body>
-        <div className="flex h-screen overflow-hidden">
-          {/* Sidebar */}
-          <Sidebar />
-          
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <Header />
-            <main className="flex-1 overflow-y-auto bg-gray-50">
-              {children}
-            </main>
+        <RoleProvider>
+          <div className="flex h-screen overflow-hidden">
+            {/* Sidebar */}
+            <Sidebar />
+            
+            {/* Main Content */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Header />
+              <main className="flex-1 overflow-y-auto bg-gray-50">
+                {children}
+              </main>
+            </div>
           </div>
-        </div>
+        </RoleProvider>
       </body>
     </html>
   );

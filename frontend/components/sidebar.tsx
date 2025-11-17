@@ -13,8 +13,9 @@ import {
   Bell,
   Users,
 } from 'lucide-react';
-import { getCurrentUser } from '@/data/mock-data';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useRole } from '@/contexts/role-context';
+import { mockReps, mockCoaches } from '@/data/mock-data';
 
 const repNavigation = [
   { name: '首页', href: '/', icon: Home },
@@ -35,10 +36,13 @@ const coachNavigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const currentUser = getCurrentUser();
+  const { currentRole } = useRole();
+  
+  // 根据当前角色获取用户信息
+  const currentUser = currentRole === 'coach' ? mockCoaches[0] : mockReps[0];
   
   // 根据用户角色选择导航
-  const navigation = currentUser.role === 'coach' ? coachNavigation : repNavigation;
+  const navigation = currentRole === 'coach' ? coachNavigation : repNavigation;
 
   return (
     <div className="flex h-full w-64 flex-col bg-white border-r">
@@ -80,7 +84,7 @@ export function Sidebar() {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-gray-900 truncate">{currentUser.name}</p>
             <p className="text-xs text-gray-500 truncate">
-              {currentUser.role === 'rep' ? '管家' : currentUser.role === 'coach' ? '教练' : '管理员'}
+              {currentRole === 'rep' ? '管家' : currentRole === 'coach' ? '教练' : '管理员'}
             </p>
           </div>
         </div>

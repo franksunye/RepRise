@@ -3,12 +3,21 @@
 import { Bell, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { getCurrentUser, getUserNotifications } from '@/data/mock-data';
+import { getUserNotifications, mockReps, mockCoaches } from '@/data/mock-data';
+import { useRole } from '@/contexts/role-context';
+import { UserRole } from '@/types';
 
 export function Header() {
-  const currentUser = getCurrentUser();
+  const { currentRole, setCurrentRole } = useRole();
+  
+  // 根据当前角色获取用户信息
+  const currentUser = currentRole === 'coach' ? mockCoaches[0] : mockReps[0];
   const notifications = getUserNotifications(currentUser.id);
   const unreadCount = notifications.filter(n => n.read === false).length;
+
+  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCurrentRole(e.target.value as UserRole);
+  };
 
   return (
     <header className="h-16 border-b bg-white px-6 flex items-center justify-between">
@@ -42,7 +51,11 @@ export function Header() {
         {/* Role Switcher */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100">
           <span className="text-xs text-gray-600">当前视角:</span>
-          <select className="text-sm font-medium bg-transparent border-none focus:outline-none cursor-pointer">
+          <select 
+            value={currentRole}
+            onChange={handleRoleChange}
+            className="text-sm font-medium bg-transparent border-none focus:outline-none cursor-pointer"
+          >
             <option value="rep">管家</option>
             <option value="coach">教练</option>
             <option value="admin">管理员</option>
