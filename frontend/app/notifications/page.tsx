@@ -50,7 +50,7 @@ export default function NotificationsPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-medium">{notif.title}</h4>
-                    {\!notif.read && <Badge variant="default" className="text-xs">新</Badge>}
+                    {!notif.read && <Badge variant="default" className="text-xs">新</Badge>}
                   </div>
                   <p className="text-sm text-gray-600 mb-2">{notif.message}</p>
                   <p className="text-xs text-gray-500">
