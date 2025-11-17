@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { getRealisticAvatarUrl, getInitials } from '@/lib/avatar';
 import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
 import {
@@ -172,7 +173,7 @@ export default function CoachRepsPage() {
                   <div className="flex items-start gap-4 flex-1">
                     <Avatar className="h-12 w-12">
                       <AvatarFallback className="bg-primary/10 text-primary font-medium text-lg">
-                        {rep.name.charAt(0)}
+                        {getInitials(rep.name)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">

@@ -3,7 +3,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { getRealisticAvatarUrl, getInitials } from '@/lib/avatar';
 import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
 import {
@@ -106,7 +107,7 @@ export default function RepDetailPage() {
           <div className="flex items-start gap-6">
             <Avatar className="h-20 w-20">
               <AvatarFallback className="bg-primary/10 text-primary font-medium text-2xl">
-                {rep.name.charAt(0)}
+                {getInitials(rep.name)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">

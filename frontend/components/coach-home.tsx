@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import {
   Users,
@@ -19,6 +19,7 @@ import {
   Award,
 } from 'lucide-react';
 import { mockReps, mockTasks, mockPractices, mockCoaches } from '@/data/mock-data';
+import { getRealisticAvatarUrl, getInitials } from '@/lib/avatar';
 
 export function CoachHome() {
   const currentCoach = mockCoaches[0];
@@ -187,7 +188,7 @@ export function CoachHome() {
                   <div key={rep.id} className="flex items-center gap-4 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
                     <Avatar className="h-10 w-10">
                       <AvatarFallback className="bg-orange-100 text-orange-600 font-medium">
-                        {rep.name.charAt(0)}
+                        {getInitials(rep.name)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
@@ -303,7 +304,7 @@ export function CoachHome() {
                   <div className="relative">
                     <Avatar className="h-12 w-12">
                       <AvatarFallback className="bg-blue-100 text-blue-600 font-medium text-lg">
-                        {rep.name.charAt(0)}
+                        {getInitials(rep.name)}
                       </AvatarFallback>
                     </Avatar>
                     {index === 0 && (

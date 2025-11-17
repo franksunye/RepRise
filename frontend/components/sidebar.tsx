@@ -13,9 +13,10 @@ import {
   Bell,
   Users,
 } from 'lucide-react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useRole } from '@/contexts/role-context';
 import { mockReps, mockCoaches } from '@/data/mock-data';
+import { getRealisticAvatarUrl, getInitials } from '@/lib/avatar';
 
 const repNavigation = [
   { name: '首页', href: '/', icon: Home },
@@ -45,10 +46,11 @@ export function Sidebar() {
   const navigation = currentRole === 'coach' ? coachNavigation : repNavigation;
 
   return (
-    <div className="flex h-full w-64 flex-col bg-white border-r">
+    <div className="flex h-full w-64 flex-col border-r bg-white">
       {/* Logo */}
-      <div className="flex h-16 items-center px-6 border-b">
-        <h1 className="text-2xl font-bold text-primary">RepRise</h1>
+      <div className="flex h-16 items-center border-b px-6">
+        <GraduationCap className="h-8 w-8 text-primary" />
+        <span className="ml-2 text-xl font-bold text-gray-900">RepRise</span>
       </div>
 
       {/* Navigation */}
@@ -77,8 +79,9 @@ export function Sidebar() {
       <div className="border-t p-4">
         <div className="flex items-center gap-3">
           <Avatar>
+            <AvatarImage src={getRealisticAvatarUrl(currentUser.name)} alt={currentUser.name} />
             <AvatarFallback className="bg-primary/10 text-primary font-medium">
-              {currentUser.name.charAt(0)}
+              {getInitials(currentUser.name)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
