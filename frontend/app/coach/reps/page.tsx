@@ -172,6 +172,7 @@ export default function CoachRepsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
                     <Avatar className="h-12 w-12">
+                      <AvatarImage src={getRealisticAvatarUrl(rep.name)} alt={rep.name} />
                       <AvatarFallback className="bg-primary/10 text-primary font-medium text-lg">
                         {getInitials(rep.name)}
                       </AvatarFallback>

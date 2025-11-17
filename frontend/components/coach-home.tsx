@@ -187,6 +187,7 @@ export function CoachHome() {
                 {repPractices.filter(r => r.needsAttention).map((rep) => (
                   <div key={rep.id} className="flex items-center gap-4 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
                     <Avatar className="h-10 w-10">
+                      <AvatarImage src={getRealisticAvatarUrl(rep.name)} alt={rep.name} />
                       <AvatarFallback className="bg-orange-100 text-orange-600 font-medium">
                         {getInitials(rep.name)}
                       </AvatarFallback>
@@ -304,6 +305,7 @@ export function CoachHome() {
                   <div className="relative">
                     <Avatar className="h-12 w-12">
                       <AvatarFallback className="bg-blue-100 text-blue-600 font-medium text-lg">
+                      <AvatarImage src={getRealisticAvatarUrl(rep.name)} alt={rep.name} />
                         {getInitials(rep.name)}
                       </AvatarFallback>
                     </Avatar>
