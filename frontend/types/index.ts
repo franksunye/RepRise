@@ -136,3 +136,26 @@ export interface UserCourseProgress {
 
 // 用户类型（联合类型）
 export type User = Rep | Coach;
+
+// 技能评分
+export interface SkillScore {
+  repId: string;
+  professionalism: number; // 专业性
+  communication: number; // 沟通能力
+  timeManagement: number; // 时间管理
+  objectionHandling: number; // 异议处理
+  closingSkill: number; // 成交技巧
+}
+
+// 历史趋势数据点
+export interface TrendDataPoint {
+  date: string;
+  value: number;
+}
+
+// 练习类型统计
+export interface PracticeTypeStats {
+  type: string;
+  count: number;
+  averageScore: number;
+}

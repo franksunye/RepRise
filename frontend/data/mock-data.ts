@@ -1,4 +1,4 @@
-import { Rep, Coach, Practice, CoachingTask, PlaybookItem, KPIData, Notification, LearningPath, Course, UserCourseProgress } from '@/types';
+import { Rep, Coach, Practice, CoachingTask, PlaybookItem, KPIData, Notification, LearningPath, Course, UserCourseProgress, SkillScore, TrendDataPoint, PracticeTypeStats } from '@/types';
 
 // 管家数据
 export const mockReps: Rep[] = [
@@ -448,3 +448,75 @@ export const getUserPathProgress = (userId: string, pathId: string) => {
     courseProgresses.reduce((sum, progress) => sum + progress, 0) / path.courses.length
   );
 };
+
+// 技能评分数据
+export const mockSkillScores: SkillScore[] = [
+  {
+    repId: 'rep-1',
+    professionalism: 88,
+    communication: 85,
+    timeManagement: 78,
+    objectionHandling: 82,
+    closingSkill: 80,
+  },
+  {
+    repId: 'rep-2',
+    professionalism: 92,
+    communication: 90,
+    timeManagement: 85,
+    objectionHandling: 88,
+    closingSkill: 86,
+  },
+];
+
+// 练习次数趋势（最近7天）
+export const mockPracticeTrend: Record<string, TrendDataPoint[]> = {
+  'rep-1': [
+    { date: '11-11', value: 2 },
+    { date: '11-12', value: 3 },
+    { date: '11-13', value: 1 },
+    { date: '11-14', value: 4 },
+    { date: '11-15', value: 2 },
+    { date: '11-16', value: 3 },
+    { date: '11-17', value: 2 },
+  ],
+};
+
+// 得分趋势（最近7天）
+export const mockScoreTrend: Record<string, TrendDataPoint[]> = {
+  'rep-1': [
+    { date: '11-11', value: 82 },
+    { date: '11-12', value: 85 },
+    { date: '11-13', value: 83 },
+    { date: '11-14', value: 87 },
+    { date: '11-15', value: 84 },
+    { date: '11-16', value: 86 },
+    { date: '11-17', value: 88 },
+  ],
+};
+
+// 练习类型统计
+export const mockPracticeTypeStats: Record<string, PracticeTypeStats[]> = {
+  'rep-1': [
+    { type: '电话沟通', count: 15, averageScore: 85 },
+    { type: '上门勘查', count: 12, averageScore: 82 },
+    { type: '报价谈判', count: 10, averageScore: 80 },
+    { type: '异议处理', count: 8, averageScore: 78 },
+  ],
+};
+
+// 获取用户技能评分
+export const getUserSkillScore = (userId: string) =>
+  mockSkillScores.find(s => s.repId === userId);
+
+// 获取用户练习趋势
+export const getUserPracticeTrend = (userId: string) =>
+  mockPracticeTrend[userId] || [];
+
+// 获取用户得分趋势
+export const getUserScoreTrend = (userId: string) =>
+  mockScoreTrend[userId] || [];
+
+// 获取用户练习类型统计
+export const getUserPracticeTypeStats = (userId: string) =>
+  mockPracticeTypeStats[userId] || [];
