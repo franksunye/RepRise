@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   TrendingUp,
@@ -15,6 +15,7 @@ import {
   Download,
   Calendar,
 } from 'lucide-react';
+import { getRealisticAvatarUrl, getInitials } from '@/lib/avatar';
 import {
   LineChart,
   Line,
@@ -391,8 +392,9 @@ export default function CoachAnalyticsPage() {
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10">
+                            <AvatarImage src={getRealisticAvatarUrl(rep.name)} alt={rep.name} />
                             <AvatarFallback className="bg-blue-100 text-blue-600 font-medium">
-                              {rep.name.charAt(0)}
+                              {getInitials(rep.name)}
                             </AvatarFallback>
                           </Avatar>
                           <div>
