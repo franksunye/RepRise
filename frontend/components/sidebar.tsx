@@ -11,20 +11,34 @@ import {
   BookOpen,
   BarChart3,
   Bell,
+  Users,
 } from 'lucide-react';
+import { getCurrentUser } from '@/data/mock-data';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-const navigation = [
+const repNavigation = [
   { name: '首页', href: '/', icon: Home },
   { name: '学习路径', href: '/onboarding', icon: GraduationCap },
   { name: '模拟练习', href: '/practice', icon: MessageSquare },
-  { name: '辅导任务', href: '/tasks', icon: ClipboardList },
+  { name: '我的任务', href: '/tasks', icon: ClipboardList },
   { name: '内容库', href: '/playbook', icon: BookOpen },
-  { name: '分析报表', href: '/analytics', icon: BarChart3 },
-  { name: '通知', href: '/notifications', icon: Bell },
+  { name: '我的数据', href: '/analytics', icon: BarChart3 },
+];
+
+const coachNavigation = [
+  { name: '首页', href: '/', icon: Home },
+  { name: '管家管理', href: '/coach/reps', icon: Users },
+  { name: '辅导任务', href: '/coach/tasks', icon: ClipboardList },
+  { name: '内容库', href: '/playbook', icon: BookOpen },
+  { name: '团队分析', href: '/coach/analytics', icon: BarChart3 },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const currentUser = getCurrentUser();
+  
+  // 根据用户角色选择导航
+  const navigation = currentUser.role === 'coach' ? coachNavigation : repNavigation;
 
   return (
     <div className="flex h-full w-64 flex-col bg-white border-r">
@@ -58,12 +72,16 @@ export function Sidebar() {
       {/* User Info */}
       <div className="border-t p-4">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <span className="text-sm font-medium text-primary">张</span>
-          </div>
+          <Avatar>
+            <AvatarFallback className="bg-primary/10 text-primary font-medium">
+              {currentUser.name.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">张伟</p>
-            <p className="text-xs text-gray-500 truncate">管家</p>
+            <p className="text-sm font-medium text-gray-900 truncate">{currentUser.name}</p>
+            <p className="text-xs text-gray-500 truncate">
+              {currentUser.role === 'rep' ? '管家' : currentUser.role === 'coach' ? '教练' : '管理员'}
+            </p>
           </div>
         </div>
       </div>

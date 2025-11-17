@@ -3,8 +3,13 @@
 import { Bell, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { getCurrentUser, getUserNotifications } from '@/data/mock-data';
 
 export function Header() {
+  const currentUser = getCurrentUser();
+  const notifications = getUserNotifications(currentUser.id);
+  const unreadCount = notifications.filter(n => n.read === false).length;
+
   return (
     <header className="h-16 border-b bg-white px-6 flex items-center justify-between">
       {/* Search */}
@@ -24,12 +29,14 @@ export function Header() {
         {/* Notifications */}
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
-          <Badge
-            variant="destructive"
-            className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-          >
-            3
-          </Badge>
+          {unreadCount > 0 && (
+            <Badge
+              variant="destructive"
+              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+            >
+              {unreadCount}
+            </Badge>
+          )}
         </Button>
 
         {/* Role Switcher */}

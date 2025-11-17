@@ -6,7 +6,7 @@ export interface Rep {
   id: string;
   name: string;
   avatar?: string;
-  role: 'rep';
+  role: UserRole;
   joinDate: string;
   email: string;
   phone: string;
@@ -19,7 +19,7 @@ export interface Coach {
   id: string;
   name: string;
   avatar?: string;
-  role: 'coach';
+  role: UserRole;
   email: string;
   phone: string;
   reps: string[]; // Rep IDs
@@ -99,3 +99,6 @@ export interface Notification {
   createdAt: string;
   link?: string;
 }
+
+// 用户类型（联合类型）
+export type User = Rep | Coach;
