@@ -4,67 +4,114 @@
 
 @layer base {
   :root {
+    /* === 浅色主题 === */
+    /* 背景色 */
     --background: 0 0% 100%;
-    --foreground: 20 5% 10%;
+    --foreground: 0 0% 25%;
     --card: 0 0% 100%;
-    --card-foreground: 20 5% 10%;
+    --card-foreground: 0 0% 25%;
     --popover: 0 0% 100%;
-    --popover-foreground: 20 5% 10%;
-    /* 柿子橘红色作为主色 */
-    --primary: 14 90% 55%;
+    --popover-foreground: 0 0% 25%;
+
+    /* 主色 - 蓝色（v2 新主色） */
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
-    /* 浅橘色作为次要色 */
-    --secondary: 20 95% 95%;
-    --secondary-foreground: 14 90% 35%;
-    --muted: 20 30% 96%;
-    --muted-foreground: 20 5% 45%;
-    --accent: 30 95% 92%;
-    --accent-foreground: 14 90% 35%;
+
+    /* 次要色 - 中性灰 */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 221 83% 53%;
+
+    /* 柔和色 */
+    --muted: 0 0% 90%;
+    --muted-foreground: 0 0% 45%;
+
+    /* 强调色 - 橙色（仅用于关键 CTA） */
+    --accent: 14 90% 57%;
+    --accent-foreground: 0 0% 100%;
+
+    /* 危险色 */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 20 20% 90%;
-    --input: 20 20% 90%;
-    --ring: 14 90% 55%;
+
+    /* 边框和输入 */
+    --border: 0 0% 83%;
+    --input: 0 0% 83%;
+    --ring: 221 83% 53%;
     --radius: 0.5rem;
-    /* 图表颜色 - 橘红色系 */
-    --chart-1: 14 90% 55%;
-    --chart-2: 30 85% 60%;
-    --chart-3: 40 80% 65%;
-    --chart-4: 10 85% 50%;
-    --chart-5: 25 90% 58%;
+
+    /* 图表颜色 - 蓝色为主，绿色为成功，橙色为强调 */
+    --chart-1: 221 83% 53%;
+    --chart-2: 142 71% 45%;
+    --chart-3: 14 90% 57%;
+    --chart-4: 38 92% 50%;
+    --chart-5: 217 91% 60%;
+
     /* 成功色 - 绿色 */
-    --success: 142 76% 36%;
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
+
+    /* 警告色 */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* 信息色 */
+    --info: 221 83% 53%;
+    --info-foreground: 0 0% 100%;
   }
 
   .dark {
-    --background: 20 10% 8%;
-    --foreground: 20 5% 95%;
-    --card: 20 10% 10%;
-    --card-foreground: 20 5% 95%;
-    --popover: 20 10% 10%;
-    --popover-foreground: 20 5% 95%;
-    /* 深色模式下的柿子橘红色 */
-    --primary: 14 85% 60%;
-    --primary-foreground: 20 10% 10%;
-    --secondary: 20 20% 18%;
-    --secondary-foreground: 14 85% 70%;
-    --muted: 20 15% 15%;
-    --muted-foreground: 20 5% 60%;
-    --accent: 20 20% 18%;
-    --accent-foreground: 14 85% 70%;
+    /* === 深色主题 === */
+    /* 背景色 */
+    --background: 0 0% 9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 98%;
+
+    /* 主色 - 蓝色（深色模式下略微提亮） */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 9%;
+
+    /* 次要色 - 深灰 */
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 217 91% 60%;
+
+    /* 柔和色 */
+    --muted: 0 0% 32%;
+    --muted-foreground: 0 0% 64%;
+
+    /* 强调色 - 橙色（深色模式下略微提亮） */
+    --accent: 27 96% 61%;
+    --accent-foreground: 0 0% 9%;
+
+    /* 危险色 */
     --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 98%;
-    --border: 20 15% 20%;
-    --input: 20 15% 20%;
-    --ring: 14 85% 60%;
-    --chart-1: 14 85% 60%;
-    --chart-2: 30 80% 65%;
-    --chart-3: 40 75% 70%;
-    --chart-4: 10 80% 55%;
-    --chart-5: 25 85% 63%;
-    --success: 142 70% 45%;
+
+    /* 边框和输入 */
+    --border: 0 0% 32%;
+    --input: 0 0% 32%;
+    --ring: 217 91% 60%;
+
+    /* 图表颜色 - 深色模式下提亮 */
+    --chart-1: 217 91% 60%;
+    --chart-2: 142 71% 55%;
+    --chart-3: 27 96% 61%;
+    --chart-4: 38 92% 60%;
+    --chart-5: 213 94% 68%;
+
+    /* 成功色 - 绿色（深色模式下提亮） */
+    --success: 142 71% 55%;
     --success-foreground: 0 0% 100%;
+
+    /* 警告色 */
+    --warning: 38 92% 60%;
+    --warning-foreground: 0 0% 9%;
+
+    /* 信息色 */
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 9%;
   }
 }
 

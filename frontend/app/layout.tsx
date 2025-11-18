@@ -5,7 +5,7 @@ import { Header } from '@/components/header';
 import { RoleProvider } from '@/contexts/role-context';
 
 export const metadata = {
-  title: 'RepRise - 管家销售使能平台',
+  title: 'RepRise - 管家销售赋能平台',
   description: '帮助线下防水维修服务的管家快速成长为高效签单销售'
 };
 

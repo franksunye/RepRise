@@ -1,12 +1,12 @@
 # 通用设计原则 — Sales Enablement 平台
 
-如果要设计一个既能做 **培训 (onboarding + training)**，又能做 **持续辅导 (coaching)** 的销售使能 (sales enablement) 平台，你需要从战略、功能、用户旅程 (user story) 以及衡量 (metrics) 几个维度来考虑。下面是整理的一些功能建议 +用户故事 (user stories) +设计原则。
+如果要设计一个既能做 **培训 (onboarding + training)**，又能做 **持续辅导 (coaching)** 的销售赋能 (sales enablement) 平台，你需要从战略、功能、用户旅程 (user story) 以及衡量 (metrics) 几个维度来考虑。下面是整理的一些功能建议 +用户故事 (user stories) +设计原则。
 
 ---
 
 ## 一、设计原则
 
-首先，明确几个在行业里被认为是高影响 (high-impact) 销售使能 (enablement) 训练 +辅导系统的原则：
+首先，明确几个在行业里被认为是高影响 (high-impact) 销售赋能 (enablement) 训练 +辅导系统的原则：
 
 1. **以结果 (outcome) 为导向**
 
