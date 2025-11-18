@@ -80,6 +80,11 @@ const WEAKNESS_DATA = [
 export default function CoachAnalyticsPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>('7d');
   const [showTimeRangeMenu, setShowTimeRangeMenu] = useState(false);
+  
+  // 自定义日期范围状态
+  const [startDate, setStartDate] = useState<string>('2025-11-11');
+  const [endDate, setEndDate] = useState<string>('2025-11-18');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   // 获取基础数据
   const currentCoach = useMemo(() => mockCoaches[0], []);
@@ -98,14 +103,16 @@ export default function CoachAnalyticsPage() {
 
   // 使用 useCallback 避免每次渲染时重新创建函数
   const getTimeRangeLabel = useCallback((range: TimeRange): string => {
-    const labels: Record<TimeRange, string> = {
+    if (range === 'custom') {
+      return `${startDate} 到 ${endDate}`;
+    }
+    const labels: Record<Exclude<TimeRange, 'custom'>, string> = {
       '7d': '最近7天',
       '30d': '最近30天',
       '90d': '最近90天',
-      'custom': '自定义日期',
     };
-    return labels[range] || '选择时间范围';
-  }, []);
+    return labels[range as Exclude<TimeRange, 'custom'>] || '选择时间范围';
+  }, [startDate, endDate]);
 
   // 生成练习趋势数据
   const generatePracticeTrendData = useCallback((): Array<{ date: string; practices: number; avgScore: number }> => {
@@ -135,10 +142,19 @@ export default function CoachAnalyticsPage() {
           { date: '10-17', practices: 40, avgScore: 83 },
           { date: '11-17', practices: 50, avgScore: 88 },
         ];
+      case 'custom':
+        // 根据自定义日期范围生成数据
+        return [
+          { date: startDate.substring(5), practices: 12, avgScore: 80 },
+          { date: new Date(new Date(startDate).getTime() + 86400000).toISOString().substring(5, 10), practices: 15, avgScore: 84 },
+          { date: new Date(new Date(startDate).getTime() + 172800000).toISOString().substring(5, 10), practices: 18, avgScore: 86 },
+          { date: new Date(new Date(startDate).getTime() + 259200000).toISOString().substring(5, 10), practices: 20, avgScore: 88 },
+          { date: endDate.substring(5), practices: 22, avgScore: 89 },
+        ];
       default:
         return [];
     }
-  }, [timeRange]);
+  }, [timeRange, startDate, endDate]);
 
   // 生成 KPI 关联数据
   const generateKPICorrelationData = useCallback((): Array<{ week: string; practices: number; successRate: number; conversionRate: number }> => {
@@ -164,10 +180,16 @@ export default function CoachAnalyticsPage() {
           { week: '10月', practices: 45, successRate: 75, conversionRate: 55 },
           { week: '11月', practices: 60, successRate: 82, conversionRate: 62 },
         ];
+      case 'custom':
+        // 根据自定义日期范围生成数据
+        return [
+          { week: `${startDate} - ${new Date(new Date(startDate).getTime() + 86400000).toISOString().substring(0, 10)}`, practices: 18, successRate: 68, conversionRate: 48 },
+          { week: `${new Date(new Date(startDate).getTime() + 86400000).toISOString().substring(0, 10)} - ${endDate}`, practices: 25, successRate: 75, conversionRate: 55 },
+        ];
       default:
         return [];
     }
-  }, [timeRange]);
+  }, [timeRange, startDate, endDate]);
 
   // 获取调整后的统计数据
   const getAdjustedStats = useCallback(() => {
@@ -175,7 +197,7 @@ export default function CoachAnalyticsPage() {
       '7d': { practices: 97, score: 87, taskRate: 85 },
       '30d': { practices: 160, score: 85, taskRate: 82 },
       '90d': { practices: 140, score: 82, taskRate: 78 },
-      'custom': { practices: 120, score: 84, taskRate: 80 },
+      'custom': { practices: 87, score: 85, taskRate: 83 },
     };
     return statsByRange[timeRange];
   }, [timeRange]);
@@ -235,7 +257,7 @@ export default function CoachAnalyticsPage() {
             
             {/* Time Range Dropdown Menu */}
             {showTimeRangeMenu && (
-              <div className="absolute right-0 z-10 w-48 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+              <div className="absolute right-0 z-10 w-72 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
                 <div className="py-2">
                   <TimeRangeButton
                     range="7d"
@@ -256,12 +278,52 @@ export default function CoachAnalyticsPage() {
                     onClick={() => handleTimeRangeChange('90d')}
                   />
                   <div className="my-1 border-t border-gray-200"></div>
-                  <TimeRangeButton
-                    range="custom"
-                    label="自定义日期"
-                    isActive={timeRange === 'custom'}
-                    onClick={() => handleTimeRangeChange('custom')}
-                  />
+                  
+                  {/* Custom Date Range */}
+                  <button
+                    onClick={() => setShowDatePicker(!showDatePicker)}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors hover:bg-gray-100 flex items-center justify-between ${
+                      timeRange === 'custom'
+                        ? 'bg-blue-50 text-blue-600 font-medium'
+                        : 'text-gray-700'
+                    }`}
+                  >
+                    <span>自定义日期</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${showDatePicker ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {/* Date Picker Input */}
+                  {showDatePicker && (
+                    <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 space-y-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">开始日期</label>
+                        <input
+                          type="date"
+                          value={startDate}
+                          onChange={(e) => setStartDate(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">结束日期</label>
+                        <input
+                          type="date"
+                          value={endDate}
+                          onChange={(e) => setEndDate(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <Button
+                        className="w-full"
+                        onClick={() => {
+                          handleTimeRangeChange('custom');
+                          setShowDatePicker(false);
+                        }}
+                      >
+                        应用日期范围
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
