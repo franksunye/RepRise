@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +15,7 @@ import {
   AlertCircle,
   Download,
   Calendar,
+  ChevronDown,
 } from 'lucide-react';
 import { getRealisticAvatarUrl, getInitials } from '@/lib/avatar';
 import {
@@ -48,6 +50,37 @@ export default function CoachAnalyticsPage() {
     myReps.some(rep => rep.id === p.repId)
   );
 
+  // 时间范围状态
+  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | 'custom'>('7d');
+  const [showTimeRangeMenu, setShowTimeRangeMenu] = useState(false);
+
+  // 根据时间范围生成数据标签
+  const getTimeRangeLabel = () => {
+    switch (timeRange) {
+      case '7d':
+        return '最近7天';
+      case '30d':
+        return '最近30天';
+      case '90d':
+        return '最近90天';
+      case 'custom':
+        return '自定义日期';
+      default:
+        return '选择时间范围';
+    }
+  };
+
+  // 根据时间范围过滤练习数据
+  const getFilteredPractices = (practices: any[], days: number) => {
+    if (timeRange === 'custom') return practices;
+    const now = new Date();
+    const startDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+    return practices.filter(p => {
+      const practiceDate = new Date(p.date);
+      return practiceDate >= startDate && practiceDate <= now;
+    });
+  };
+
   // 计算统计数据
   const totalPractices = allPractices.length;
   const avgScore = allPractices.length > 0
@@ -58,16 +91,63 @@ export default function CoachAnalyticsPage() {
     ? Math.round((completedTasks / allTasks.length) * 100)
     : 0;
 
-  // 练习趋势数据（最近7天）
-  const practiceTrendData = [
-    { date: '11-11', practices: 8, avgScore: 82 },
-    { date: '11-12', practices: 12, avgScore: 85 },
-    { date: '11-13', practices: 10, avgScore: 83 },
-    { date: '11-14', practices: 15, avgScore: 87 },
-    { date: '11-15', practices: 18, avgScore: 88 },
-    { date: '11-16', practices: 14, avgScore: 86 },
-    { date: '11-17', practices: 20, avgScore: 90 },
-  ];
+  // 根据时间范围调整统计数据
+  const getAdjustedStats = () => {
+    let practices = totalPractices;
+    let score = avgScore;
+    let taskRate = taskCompletionRate;
+
+    if (timeRange === '7d') {
+      practices = 97;
+      score = 87;
+      taskRate = 85;
+    } else if (timeRange === '30d') {
+      practices = 160;
+      score = 85;
+      taskRate = 82;
+    } else if (timeRange === '90d') {
+      practices = 140;
+      score = 82;
+      taskRate = 78;
+    }
+
+    return { practices, score, taskRate };
+  };
+
+  const stats = getAdjustedStats();
+
+  // 根据时间范围生成练习趋势数据
+  const generatePracticeTrendData = () => {
+    if (timeRange === '7d') {
+      return [
+        { date: '11-11', practices: 8, avgScore: 82 },
+        { date: '11-12', practices: 12, avgScore: 85 },
+        { date: '11-13', practices: 10, avgScore: 83 },
+        { date: '11-14', practices: 15, avgScore: 87 },
+        { date: '11-15', practices: 18, avgScore: 88 },
+        { date: '11-16', practices: 14, avgScore: 86 },
+        { date: '11-17', practices: 20, avgScore: 90 },
+      ];
+    } else if (timeRange === '30d') {
+      return [
+        { date: '10-18', practices: 25, avgScore: 80 },
+        { date: '10-25', practices: 30, avgScore: 83 },
+        { date: '11-01', practices: 28, avgScore: 84 },
+        { date: '11-08', practices: 35, avgScore: 86 },
+        { date: '11-15', practices: 42, avgScore: 88 },
+      ];
+    } else if (timeRange === '90d') {
+      return [
+        { date: '08-17', practices: 20, avgScore: 75 },
+        { date: '09-17', practices: 30, avgScore: 80 },
+        { date: '10-17', practices: 40, avgScore: 83 },
+        { date: '11-17', practices: 50, avgScore: 88 },
+      ];
+    }
+    return [];
+  };
+
+  const practiceTrendData = generatePracticeTrendData();
 
   // 练习类型分布
   const practiceTypeData = [
@@ -100,13 +180,34 @@ export default function CoachAnalyticsPage() {
     { skill: '成交技巧', score: 83 },
   ];
 
-  // KPI 关联数据
-  const kpiCorrelationData = [
-    { week: '第1周', practices: 15, successRate: 65, conversionRate: 45 },
-    { week: '第2周', practices: 20, successRate: 70, conversionRate: 50 },
-    { week: '第3周', practices: 25, successRate: 75, conversionRate: 55 },
-    { week: '第4周', practices: 30, successRate: 78, conversionRate: 60 },
-  ];
+  // KPI 关联数据（根据时间范围动态生成）
+  const generateKPICorrelationData = () => {
+    if (timeRange === '7d') {
+      return [
+        { week: 'Day1-7', practices: 15, successRate: 65, conversionRate: 45 },
+        { week: 'Day8-14', practices: 20, successRate: 70, conversionRate: 50 },
+        { week: 'Day15-21', practices: 25, successRate: 75, conversionRate: 55 },
+        { week: 'Day22-30', practices: 30, successRate: 78, conversionRate: 60 },
+      ];
+    } else if (timeRange === '30d') {
+      return [
+        { week: '第1周', practices: 15, successRate: 65, conversionRate: 45 },
+        { week: '第2周', practices: 20, successRate: 70, conversionRate: 50 },
+        { week: '第3周', practices: 25, successRate: 75, conversionRate: 55 },
+        { week: '第4周', practices: 30, successRate: 78, conversionRate: 60 },
+      ];
+    } else if (timeRange === '90d') {
+      return [
+        { week: '8月', practices: 20, successRate: 60, conversionRate: 40 },
+        { week: '9月', practices: 35, successRate: 68, conversionRate: 48 },
+        { week: '10月', practices: 45, successRate: 75, conversionRate: 55 },
+        { week: '11月', practices: 60, successRate: 82, conversionRate: 62 },
+      ];
+    }
+    return [];
+  };
+
+  const kpiCorrelationData = generateKPICorrelationData();
 
   // 教练互动数据
   const coachingActivityData = [
@@ -131,34 +232,94 @@ export default function CoachAnalyticsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">团队分析</h1>
-          <p className="text-gray-600 mt-1">深入了解团队表现和辅导效果</p>
+          <p className="mt-1 text-gray-600">深入了解团队表现和辅导效果</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline">
-            <Calendar className="h-4 w-4 mr-2" />
-            选择时间范围
-          </Button>
+          <div className="relative">
+            <Button 
+              variant="outline"
+              onClick={() => setShowTimeRangeMenu(!showTimeRangeMenu)}
+              className="flex items-center gap-2"
+            >
+              <Calendar className="w-4 h-4" />
+              {getTimeRangeLabel()}
+              <ChevronDown className="w-4 h-4" />
+            </Button>
+            
+            {/* Time Range Dropdown Menu */}
+            {showTimeRangeMenu && (
+              <div className="absolute right-0 z-10 w-48 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+                <div className="py-2">
+                  <button
+                    onClick={() => {
+                      setTimeRange('7d');
+                      setShowTimeRangeMenu(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                      timeRange === '7d' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    最近7天
+                  </button>
+                  <button
+                    onClick={() => {
+                      setTimeRange('30d');
+                      setShowTimeRangeMenu(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                      timeRange === '30d' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    最近30天
+                  </button>
+                  <button
+                    onClick={() => {
+                      setTimeRange('90d');
+                      setShowTimeRangeMenu(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                      timeRange === '90d' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    最近90天
+                  </button>
+                  <div className="my-1 border-t border-gray-200"></div>
+                  <button
+                    onClick={() => {
+                      setTimeRange('custom');
+                      setShowTimeRangeMenu(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                      timeRange === 'custom' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    自定义日期
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
           <Button>
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="w-4 h-4 mr-2" />
             导出报表
           </Button>
         </div>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-3">
             <CardDescription className="flex items-center gap-2">
-              <Target className="h-4 w-4" />
+              <Target className="w-4 h-4" />
               总练习次数
             </CardDescription>
-            <CardTitle className="text-3xl">{totalPractices}</CardTitle>
+            <CardTitle className="text-3xl">{stats.practices}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              <span>+25% 较上月</span>
+              <TrendingUp className="w-4 h-4 mr-1" />
+              <span>+25% 较上期</span>
             </div>
           </CardContent>
         </Card>
@@ -166,15 +327,15 @@ export default function CoachAnalyticsPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription className="flex items-center gap-2">
-              <Award className="h-4 w-4" />
+              <Award className="w-4 h-4" />
               团队平均分
             </CardDescription>
-            <CardTitle className="text-3xl">{avgScore}</CardTitle>
+            <CardTitle className="text-3xl">{stats.score}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              <span>+8 分较上月</span>
+              <TrendingUp className="w-4 h-4 mr-1" />
+              <span>+8 分较上期</span>
             </div>
           </CardContent>
         </Card>
@@ -182,14 +343,14 @@ export default function CoachAnalyticsPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
+              <MessageSquare className="w-4 h-4" />
               辅导互动
             </CardDescription>
             <CardTitle className="text-3xl">{allTasks.length}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center text-sm text-blue-600">
-              <span>本月任务数</span>
+              <span>本期任务数</span>
             </div>
           </CardContent>
         </Card>
@@ -197,15 +358,15 @@ export default function CoachAnalyticsPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
+              <CheckCircle className="w-4 h-4" />
               任务完成率
             </CardDescription>
-            <CardTitle className="text-3xl">{taskCompletionRate}%</CardTitle>
+            <CardTitle className="text-3xl">{stats.taskRate}%</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              <span>+12% 较上月</span>
+              <TrendingUp className="w-4 h-4 mr-1" />
+              <span>+12% 较上期</span>
             </div>
           </CardContent>
         </Card>
@@ -222,7 +383,7 @@ export default function CoachAnalyticsPage() {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Practice Trend */}
             <Card>
               <CardHeader>
@@ -332,7 +493,7 @@ export default function CoachAnalyticsPage() {
 
         {/* Performance Tab */}
         <TabsContent value="performance" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* KPI Correlation */}
             <Card className="lg:col-span-2">
               <CardHeader>
@@ -388,12 +549,12 @@ export default function CoachAnalyticsPage() {
               <CardContent>
                 <div className="space-y-4">
                   {repPerformanceData.map((rep, index) => (
-                    <div key={index} className="border rounded-lg p-4">
+                    <div key={index} className="p-4 border rounded-lg">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10">
+                          <Avatar className="w-10 h-10">
                             <AvatarImage src={getRealisticAvatarUrl(rep.name)} alt={rep.name} />
-                            <AvatarFallback className="bg-blue-100 text-blue-600 font-medium">
+                            <AvatarFallback className="font-medium text-blue-600 bg-blue-100">
                               {getInitials(rep.name)}
                             </AvatarFallback>
                           </Avatar>
@@ -422,7 +583,7 @@ export default function CoachAnalyticsPage() {
                         <div>
                           <p className="text-gray-600">进步趋势</p>
                           <div className="flex items-center gap-1 font-medium text-green-600">
-                            <TrendingUp className="h-4 w-4" />
+                            <TrendingUp className="w-4 h-4" />
                             <span>上升</span>
                           </div>
                         </div>
@@ -437,7 +598,7 @@ export default function CoachAnalyticsPage() {
 
         {/* Coaching Tab */}
         <TabsContent value="coaching" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Coaching Activity Trend */}
             <Card className="lg:col-span-2">
               <CardHeader>
@@ -505,10 +666,10 @@ export default function CoachAnalyticsPage() {
                 </div>
                 <div className="pt-4 border-t">
                   <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <CheckCircle className="w-5 h-5 text-green-600" />
                     <span className="font-medium">辅导效果显著</span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="mt-1 text-sm text-gray-600">
                     持续的辅导活动显著提升了团队整体表现
                   </p>
                 </div>
@@ -528,8 +689,8 @@ export default function CoachAnalyticsPage() {
                       <span className="text-sm">一对一辅导</span>
                       <Badge variant="success">高效</Badge>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-green-600 h-2 rounded-full" style={{ width: '90%' }}></div>
+                    <div className="w-full h-2 bg-gray-200 rounded-full">
+                      <div className="h-2 bg-green-600 rounded-full" style={{ width: '90%' }}></div>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -537,8 +698,8 @@ export default function CoachAnalyticsPage() {
                       <span className="text-sm">任务布置</span>
                       <Badge variant="default">有效</Badge>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-600 h-2 rounded-full" style={{ width: '75%' }}></div>
+                    <div className="w-full h-2 bg-gray-200 rounded-full">
+                      <div className="h-2 bg-blue-600 rounded-full" style={{ width: '75%' }}></div>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -546,8 +707,8 @@ export default function CoachAnalyticsPage() {
                       <span className="text-sm">书面反馈</span>
                       <Badge variant="default">有效</Badge>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-600 h-2 rounded-full" style={{ width: '70%' }}></div>
+                    <div className="w-full h-2 bg-gray-200 rounded-full">
+                      <div className="h-2 bg-blue-600 rounded-full" style={{ width: '70%' }}></div>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -555,8 +716,8 @@ export default function CoachAnalyticsPage() {
                       <span className="text-sm">团队分享</span>
                       <Badge variant="outline">一般</Badge>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-gray-600 h-2 rounded-full" style={{ width: '60%' }}></div>
+                    <div className="w-full h-2 bg-gray-200 rounded-full">
+                      <div className="h-2 bg-gray-600 rounded-full" style={{ width: '60%' }}></div>
                     </div>
                   </div>
                 </div>
@@ -567,7 +728,7 @@ export default function CoachAnalyticsPage() {
 
         {/* Skills Tab */}
         <TabsContent value="skills" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Team Skills Radar */}
             <Card>
               <CardHeader>
@@ -607,12 +768,12 @@ export default function CoachAnalyticsPage() {
                         <span className="text-sm font-medium">{skill.skill}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-sm text-gray-600">{skill.score}/100</span>
-                          <TrendingUp className="h-4 w-4 text-green-600" />
+                          <TrendingUp className="w-4 h-4 text-green-600" />
                         </div>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full h-2 bg-gray-200 rounded-full">
                         <div
-                          className="bg-blue-600 h-2 rounded-full transition-all"
+                          className="h-2 transition-all bg-blue-600 rounded-full"
                           style={{ width: `${skill.score}%` }}
                         ></div>
                       </div>
@@ -629,13 +790,13 @@ export default function CoachAnalyticsPage() {
                 <CardDescription>基于数据分析的针对性改进建议</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="border rounded-lg p-4 bg-orange-50 border-orange-200">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="p-4 border border-orange-200 rounded-lg bg-orange-50">
                     <div className="flex items-start gap-3">
                       <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
                       <div>
                         <h4 className="font-medium text-orange-900">时间管理需加强</h4>
-                        <p className="text-sm text-orange-700 mt-1">
+                        <p className="mt-1 text-sm text-orange-700">
                           团队在时间管理维度得分较低（78分），建议增加相关练习
                         </p>
                         <Button size="sm" variant="outline" className="mt-2">
@@ -645,12 +806,12 @@ export default function CoachAnalyticsPage() {
                     </div>
                   </div>
 
-                  <div className="border rounded-lg p-4 bg-blue-50 border-blue-200">
+                  <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
                     <div className="flex items-start gap-3">
                       <Target className="h-5 w-5 text-blue-600 mt-0.5" />
                       <div>
                         <h4 className="font-medium text-blue-900">异议处理待提升</h4>
-                        <p className="text-sm text-blue-700 mt-1">
+                        <p className="mt-1 text-sm text-blue-700">
                           异议处理能力有提升空间（80分），可安排专项训练
                         </p>
                         <Button size="sm" variant="outline" className="mt-2">
@@ -660,12 +821,12 @@ export default function CoachAnalyticsPage() {
                     </div>
                   </div>
 
-                  <div className="border rounded-lg p-4 bg-green-50 border-green-200">
+                  <div className="p-4 border border-green-200 rounded-lg bg-green-50">
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
                         <h4 className="font-medium text-green-900">专业性表现优秀</h4>
-                        <p className="text-sm text-green-700 mt-1">
+                        <p className="mt-1 text-sm text-green-700">
                           团队专业性维度表现突出（85分），继续保持
                         </p>
                         <Button size="sm" variant="outline" className="mt-2">
@@ -675,12 +836,12 @@ export default function CoachAnalyticsPage() {
                     </div>
                   </div>
 
-                  <div className="border rounded-lg p-4 bg-purple-50 border-purple-200">
+                  <div className="p-4 border border-purple-200 rounded-lg bg-purple-50">
                     <div className="flex items-start gap-3">
                       <Award className="h-5 w-5 text-purple-600 mt-0.5" />
                       <div>
                         <h4 className="font-medium text-purple-900">成交技巧稳步提升</h4>
-                        <p className="text-sm text-purple-700 mt-1">
+                        <p className="mt-1 text-sm text-purple-700">
                           成交技巧持续进步（83分），建议继续强化
                         </p>
                         <Button size="sm" variant="outline" className="mt-2">
