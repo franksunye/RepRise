@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -41,190 +41,177 @@ import {
   Radar,
 } from 'recharts';
 import { mockReps, mockTasks, mockPractices, mockCoaches } from '@/data/mock-data';
+import { TimeRangeButton } from './time-range-button';
+
+// 类型定义
+type TimeRange = '7d' | '30d' | '90d' | 'custom';
+
+// 常量提取到组件外部
+const PRACTICE_TYPE_DATA = [
+  { name: '电话沟通', value: 35, color: '#3b82f6' },
+  { name: '上门勘查', value: 25, color: '#10b981' },
+  { name: '报价谈判', value: 30, color: '#8b5cf6' },
+  { name: '异议处理', value: 10, color: '#f59e0b' },
+];
+
+const SKILLS_DATA = [
+  { skill: '专业性', score: 85 },
+  { skill: '沟通能力', score: 82 },
+  { skill: '时间管理', score: 78 },
+  { skill: '异议处理', score: 80 },
+  { skill: '成交技巧', score: 83 },
+];
+
+const COACHING_ACTIVITY_DATA = [
+  { month: '8月', tasks: 12, feedback: 25, sessions: 8 },
+  { month: '9月', tasks: 15, feedback: 30, sessions: 10 },
+  { month: '10月', tasks: 18, feedback: 35, sessions: 12 },
+  { month: '11月', tasks: 20, feedback: 40, sessions: 15 },
+];
+
+const WEAKNESS_DATA = [
+  { weakness: '异议处理', count: 5 },
+  { weakness: '时间管理', count: 4 },
+  { weakness: '报价谈判', count: 3 },
+  { weakness: '沟通能力', count: 2 },
+  { weakness: '专业性', count: 1 },
+];
 
 export default function CoachAnalyticsPage() {
-  const currentCoach = mockCoaches[0];
-  const myReps = mockReps.filter(rep => currentCoach.reps.includes(rep.id));
-  const allTasks = mockTasks.filter(task => task.coachId === currentCoach.id);
-  const allPractices = mockPractices.filter(p => 
-    myReps.some(rep => rep.id === p.repId)
-  );
-
-  // 时间范围状态
-  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | 'custom'>('7d');
+  const [timeRange, setTimeRange] = useState<TimeRange>('7d');
   const [showTimeRangeMenu, setShowTimeRangeMenu] = useState(false);
 
-  // 根据时间范围生成数据标签
-  const getTimeRangeLabel = () => {
+  // 获取基础数据
+  const currentCoach = useMemo(() => mockCoaches[0], []);
+  const myReps = useMemo(() => 
+    mockReps.filter(rep => currentCoach.reps.includes(rep.id)),
+    [currentCoach]
+  );
+  const allTasks = useMemo(() =>
+    mockTasks.filter(task => task.coachId === currentCoach.id),
+    [currentCoach]
+  );
+  const allPractices = useMemo(() =>
+    mockPractices.filter(p => myReps.some(rep => rep.id === p.repId)),
+    [myReps]
+  );
+
+  // 使用 useCallback 避免每次渲染时重新创建函数
+  const getTimeRangeLabel = useCallback((range: TimeRange): string => {
+    const labels: Record<TimeRange, string> = {
+      '7d': '最近7天',
+      '30d': '最近30天',
+      '90d': '最近90天',
+      'custom': '自定义日期',
+    };
+    return labels[range] || '选择时间范围';
+  }, []);
+
+  // 生成练习趋势数据
+  const generatePracticeTrendData = useCallback((): Array<{ date: string; practices: number; avgScore: number }> => {
     switch (timeRange) {
       case '7d':
-        return '最近7天';
+        return [
+          { date: '11-11', practices: 8, avgScore: 82 },
+          { date: '11-12', practices: 12, avgScore: 85 },
+          { date: '11-13', practices: 10, avgScore: 83 },
+          { date: '11-14', practices: 15, avgScore: 87 },
+          { date: '11-15', practices: 18, avgScore: 88 },
+          { date: '11-16', practices: 14, avgScore: 86 },
+          { date: '11-17', practices: 20, avgScore: 90 },
+        ];
       case '30d':
-        return '最近30天';
+        return [
+          { date: '10-18', practices: 25, avgScore: 80 },
+          { date: '10-25', practices: 30, avgScore: 83 },
+          { date: '11-01', practices: 28, avgScore: 84 },
+          { date: '11-08', practices: 35, avgScore: 86 },
+          { date: '11-15', practices: 42, avgScore: 88 },
+        ];
       case '90d':
-        return '最近90天';
-      case 'custom':
-        return '自定义日期';
+        return [
+          { date: '08-17', practices: 20, avgScore: 75 },
+          { date: '09-17', practices: 30, avgScore: 80 },
+          { date: '10-17', practices: 40, avgScore: 83 },
+          { date: '11-17', practices: 50, avgScore: 88 },
+        ];
       default:
-        return '选择时间范围';
+        return [];
     }
-  };
+  }, [timeRange]);
 
-  // 根据时间范围过滤练习数据
-  const getFilteredPractices = (practices: any[], days: number) => {
-    if (timeRange === 'custom') return practices;
-    const now = new Date();
-    const startDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-    return practices.filter(p => {
-      const practiceDate = new Date(p.date);
-      return practiceDate >= startDate && practiceDate <= now;
-    });
-  };
-
-  // 计算统计数据
-  const totalPractices = allPractices.length;
-  const avgScore = allPractices.length > 0
-    ? Math.round(allPractices.reduce((sum, p) => sum + p.score, 0) / allPractices.length)
-    : 0;
-  const completedTasks = allTasks.filter(t => t.status === 'completed').length;
-  const taskCompletionRate = allTasks.length > 0
-    ? Math.round((completedTasks / allTasks.length) * 100)
-    : 0;
-
-  // 根据时间范围调整统计数据
-  const getAdjustedStats = () => {
-    let practices = totalPractices;
-    let score = avgScore;
-    let taskRate = taskCompletionRate;
-
-    if (timeRange === '7d') {
-      practices = 97;
-      score = 87;
-      taskRate = 85;
-    } else if (timeRange === '30d') {
-      practices = 160;
-      score = 85;
-      taskRate = 82;
-    } else if (timeRange === '90d') {
-      practices = 140;
-      score = 82;
-      taskRate = 78;
+  // 生成 KPI 关联数据
+  const generateKPICorrelationData = useCallback((): Array<{ week: string; practices: number; successRate: number; conversionRate: number }> => {
+    switch (timeRange) {
+      case '7d':
+        return [
+          { week: 'Day1-7', practices: 15, successRate: 65, conversionRate: 45 },
+          { week: 'Day8-14', practices: 20, successRate: 70, conversionRate: 50 },
+          { week: 'Day15-21', practices: 25, successRate: 75, conversionRate: 55 },
+          { week: 'Day22-30', practices: 30, successRate: 78, conversionRate: 60 },
+        ];
+      case '30d':
+        return [
+          { week: '第1周', practices: 15, successRate: 65, conversionRate: 45 },
+          { week: '第2周', practices: 20, successRate: 70, conversionRate: 50 },
+          { week: '第3周', practices: 25, successRate: 75, conversionRate: 55 },
+          { week: '第4周', practices: 30, successRate: 78, conversionRate: 60 },
+        ];
+      case '90d':
+        return [
+          { week: '8月', practices: 20, successRate: 60, conversionRate: 40 },
+          { week: '9月', practices: 35, successRate: 68, conversionRate: 48 },
+          { week: '10月', practices: 45, successRate: 75, conversionRate: 55 },
+          { week: '11月', practices: 60, successRate: 82, conversionRate: 62 },
+        ];
+      default:
+        return [];
     }
+  }, [timeRange]);
 
-    return { practices, score, taskRate };
-  };
+  // 获取调整后的统计数据
+  const getAdjustedStats = useCallback(() => {
+    const statsByRange: Record<TimeRange, { practices: number; score: number; taskRate: number }> = {
+      '7d': { practices: 97, score: 87, taskRate: 85 },
+      '30d': { practices: 160, score: 85, taskRate: 82 },
+      '90d': { practices: 140, score: 82, taskRate: 78 },
+      'custom': { practices: 120, score: 84, taskRate: 80 },
+    };
+    return statsByRange[timeRange];
+  }, [timeRange]);
 
-  const stats = getAdjustedStats();
-
-  // 根据时间范围生成练习趋势数据
-  const generatePracticeTrendData = () => {
-    if (timeRange === '7d') {
-      return [
-        { date: '11-11', practices: 8, avgScore: 82 },
-        { date: '11-12', practices: 12, avgScore: 85 },
-        { date: '11-13', practices: 10, avgScore: 83 },
-        { date: '11-14', practices: 15, avgScore: 87 },
-        { date: '11-15', practices: 18, avgScore: 88 },
-        { date: '11-16', practices: 14, avgScore: 86 },
-        { date: '11-17', practices: 20, avgScore: 90 },
-      ];
-    } else if (timeRange === '30d') {
-      return [
-        { date: '10-18', practices: 25, avgScore: 80 },
-        { date: '10-25', practices: 30, avgScore: 83 },
-        { date: '11-01', practices: 28, avgScore: 84 },
-        { date: '11-08', practices: 35, avgScore: 86 },
-        { date: '11-15', practices: 42, avgScore: 88 },
-      ];
-    } else if (timeRange === '90d') {
-      return [
-        { date: '08-17', practices: 20, avgScore: 75 },
-        { date: '09-17', practices: 30, avgScore: 80 },
-        { date: '10-17', practices: 40, avgScore: 83 },
-        { date: '11-17', practices: 50, avgScore: 88 },
-      ];
-    }
-    return [];
-  };
-
-  const practiceTrendData = generatePracticeTrendData();
-
-  // 练习类型分布
-  const practiceTypeData = [
-    { name: '电话沟通', value: 35, color: '#3b82f6' },
-    { name: '上门勘查', value: 25, color: '#10b981' },
-    { name: '报价谈判', value: 30, color: '#8b5cf6' },
-    { name: '异议处理', value: 10, color: '#f59e0b' },
-  ];
+  // 使用 useMemo 缓存计算结果
+  const stats = useMemo(() => getAdjustedStats(), [getAdjustedStats]);
+  const practiceTrendData = useMemo(() => generatePracticeTrendData(), [generatePracticeTrendData]);
+  const kpiCorrelationData = useMemo(() => generateKPICorrelationData(), [generateKPICorrelationData]);
 
   // 管家绩效对比
-  const repPerformanceData = myReps.map(rep => {
-    const practices = mockPractices.filter(p => p.repId === rep.id);
-    const avgScore = practices.length > 0
-      ? Math.round(practices.reduce((sum, p) => sum + p.score, 0) / practices.length)
-      : 0;
-    return {
-      name: rep.name,
-      practices: practices.length,
-      avgScore,
-      tasks: allTasks.filter(t => t.repId === rep.id).length,
-    };
-  });
+  const repPerformanceData = useMemo(() => 
+    myReps.map(rep => {
+      const practices = mockPractices.filter(p => p.repId === rep.id);
+      const avgScore = practices.length > 0
+        ? Math.round(practices.reduce((sum, p) => sum + p.score, 0) / practices.length)
+        : 0;
+      return {
+        name: rep.name,
+        practices: practices.length,
+        avgScore,
+        tasks: allTasks.filter(t => t.repId === rep.id).length,
+      };
+    }),
+    [myReps, allTasks]
+  );
 
-  // 能力维度分析（团队平均）
-  const skillsData = [
-    { skill: '专业性', score: 85 },
-    { skill: '沟通能力', score: 82 },
-    { skill: '时间管理', score: 78 },
-    { skill: '异议处理', score: 80 },
-    { skill: '成交技巧', score: 83 },
-  ];
+  // 处理时间范围选择
+  const handleTimeRangeChange = useCallback((range: TimeRange) => {
+    setTimeRange(range);
+    setShowTimeRangeMenu(false);
+  }, []);
 
-  // KPI 关联数据（根据时间范围动态生成）
-  const generateKPICorrelationData = () => {
-    if (timeRange === '7d') {
-      return [
-        { week: 'Day1-7', practices: 15, successRate: 65, conversionRate: 45 },
-        { week: 'Day8-14', practices: 20, successRate: 70, conversionRate: 50 },
-        { week: 'Day15-21', practices: 25, successRate: 75, conversionRate: 55 },
-        { week: 'Day22-30', practices: 30, successRate: 78, conversionRate: 60 },
-      ];
-    } else if (timeRange === '30d') {
-      return [
-        { week: '第1周', practices: 15, successRate: 65, conversionRate: 45 },
-        { week: '第2周', practices: 20, successRate: 70, conversionRate: 50 },
-        { week: '第3周', practices: 25, successRate: 75, conversionRate: 55 },
-        { week: '第4周', practices: 30, successRate: 78, conversionRate: 60 },
-      ];
-    } else if (timeRange === '90d') {
-      return [
-        { week: '8月', practices: 20, successRate: 60, conversionRate: 40 },
-        { week: '9月', practices: 35, successRate: 68, conversionRate: 48 },
-        { week: '10月', practices: 45, successRate: 75, conversionRate: 55 },
-        { week: '11月', practices: 60, successRate: 82, conversionRate: 62 },
-      ];
-    }
-    return [];
-  };
-
-  const kpiCorrelationData = generateKPICorrelationData();
-
-  // 教练互动数据
-  const coachingActivityData = [
-    { month: '8月', tasks: 12, feedback: 25, sessions: 8 },
-    { month: '9月', tasks: 15, feedback: 30, sessions: 10 },
-    { month: '10月', tasks: 18, feedback: 35, sessions: 12 },
-    { month: '11月', tasks: 20, feedback: 40, sessions: 15 },
-  ];
-
-  // 弱项分布
-  const weaknessData = [
-    { weakness: '异议处理', count: 5 },
-    { weakness: '时间管理', count: 4 },
-    { weakness: '报价谈判', count: 3 },
-    { weakness: '沟通能力', count: 2 },
-    { weakness: '专业性', count: 1 },
-  ];
+  // 关闭菜单的处理器
+  const toggleTimeRangeMenu = useCallback(() => {
+    setShowTimeRangeMenu(prev => !prev);
+  }, []);
 
   return (
     <div className="p-6 space-y-6">
@@ -238,11 +225,11 @@ export default function CoachAnalyticsPage() {
           <div className="relative">
             <Button 
               variant="outline"
-              onClick={() => setShowTimeRangeMenu(!showTimeRangeMenu)}
+              onClick={toggleTimeRangeMenu}
               className="flex items-center gap-2"
             >
               <Calendar className="w-4 h-4" />
-              {getTimeRangeLabel()}
+              {getTimeRangeLabel(timeRange)}
               <ChevronDown className="w-4 h-4" />
             </Button>
             
@@ -250,51 +237,31 @@ export default function CoachAnalyticsPage() {
             {showTimeRangeMenu && (
               <div className="absolute right-0 z-10 w-48 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
                 <div className="py-2">
-                  <button
-                    onClick={() => {
-                      setTimeRange('7d');
-                      setShowTimeRangeMenu(false);
-                    }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                      timeRange === '7d' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-                    }`}
-                  >
-                    最近7天
-                  </button>
-                  <button
-                    onClick={() => {
-                      setTimeRange('30d');
-                      setShowTimeRangeMenu(false);
-                    }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                      timeRange === '30d' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-                    }`}
-                  >
-                    最近30天
-                  </button>
-                  <button
-                    onClick={() => {
-                      setTimeRange('90d');
-                      setShowTimeRangeMenu(false);
-                    }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                      timeRange === '90d' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-                    }`}
-                  >
-                    最近90天
-                  </button>
+                  <TimeRangeButton
+                    range="7d"
+                    label="最近7天"
+                    isActive={timeRange === '7d'}
+                    onClick={() => handleTimeRangeChange('7d')}
+                  />
+                  <TimeRangeButton
+                    range="30d"
+                    label="最近30天"
+                    isActive={timeRange === '30d'}
+                    onClick={() => handleTimeRangeChange('30d')}
+                  />
+                  <TimeRangeButton
+                    range="90d"
+                    label="最近90天"
+                    isActive={timeRange === '90d'}
+                    onClick={() => handleTimeRangeChange('90d')}
+                  />
                   <div className="my-1 border-t border-gray-200"></div>
-                  <button
-                    onClick={() => {
-                      setTimeRange('custom');
-                      setShowTimeRangeMenu(false);
-                    }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                      timeRange === 'custom' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-                    }`}
-                  >
-                    自定义日期
-                  </button>
+                  <TimeRangeButton
+                    range="custom"
+                    label="自定义日期"
+                    isActive={timeRange === 'custom'}
+                    onClick={() => handleTimeRangeChange('custom')}
+                  />
                 </div>
               </div>
             )}
@@ -430,16 +397,16 @@ export default function CoachAnalyticsPage() {
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
-                      data={practiceTypeData}
+                      data={PRACTICE_TYPE_DATA}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
+                      label={({ name, percent }: any) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
                       outerRadius={100}
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {practiceTypeData.map((entry, index) => (
+                      {PRACTICE_TYPE_DATA.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -478,7 +445,7 @@ export default function CoachAnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={weaknessData} layout="vertical">
+                  <BarChart data={WEAKNESS_DATA} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" />
                     <YAxis dataKey="weakness" type="category" width={100} />
@@ -607,7 +574,7 @@ export default function CoachAnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={350}>
-                  <LineChart data={coachingActivityData}>
+                  <LineChart data={COACHING_ACTIVITY_DATA}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
@@ -737,7 +704,7 @@ export default function CoachAnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={350}>
-                  <RadarChart data={skillsData}>
+                  <RadarChart data={SKILLS_DATA}>
                     <PolarGrid />
                     <PolarAngleAxis dataKey="skill" />
                     <PolarRadiusAxis angle={90} domain={[0, 100]} />
@@ -762,7 +729,7 @@ export default function CoachAnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {skillsData.map((skill, index) => (
+                  {SKILLS_DATA.map((skill, index) => (
                     <div key={index} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">{skill.skill}</span>
