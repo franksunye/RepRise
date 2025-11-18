@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import {
   ArrowLeft,
   Download,
@@ -223,10 +225,47 @@ export default function PlaybookDetailPage() {
             </CardHeader>
             <CardContent>
               <div className="prose prose-sm max-w-none">
-                <div
-                  className="whitespace-pre-wrap text-sm leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: playbook.content.replace(/\n/g, '<br/>') }}
-                />
+                <div className="text-sm leading-relaxed">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      code: (props: any) => {
+                        const { inline, className, children, ...rest } = props;
+                        const match = /language-(\w+)/.exec(className || '');
+                        if (!inline && match) {
+                          return (
+                            <pre className="rounded-md bg-gray-900 text-white p-4 overflow-auto text-xs">
+                              <code className={className} {...rest}>
+                                {String(children).replace(/\n$/, '')}
+                              </code>
+                            </pre>
+                          );
+                        }
+                        return (
+                          <code className="bg-gray-100 px-1 rounded text-xs" {...rest}>
+                            {children}
+                          </code>
+                        );
+                      },
+                      a: (props: any) => {
+                        const { href, children, ...rest } = props;
+                        const isExternal = typeof href === 'string' && !href.startsWith('/');
+                        return (
+                          <a
+                            href={href}
+                            {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                            {...rest}
+                            className="text-primary hover:underline"
+                          >
+                            {children}
+                          </a>
+                        );
+                      },
+                    }}
+                  >
+                    {playbook.content}
+                  </ReactMarkdown>
+                </div>
               </div>
             </CardContent>
           </Card>

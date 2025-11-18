@@ -257,7 +257,7 @@ export default function CoachAnalyticsPage() {
             
             {/* Time Range Dropdown Menu */}
             {showTimeRangeMenu && (
-              <div className="absolute right-0 z-10 w-72 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+              <div className="absolute right-0 z-10 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg w-72">
                 <div className="py-2">
                   <TimeRangeButton
                     range="7d"
@@ -294,23 +294,23 @@ export default function CoachAnalyticsPage() {
                   
                   {/* Date Picker Input */}
                   {showDatePicker && (
-                    <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 space-y-3">
+                    <div className="px-4 py-3 space-y-3 border-t border-gray-200 bg-gray-50">
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">开始日期</label>
+                        <label className="block mb-1 text-xs font-medium text-gray-600">开始日期</label>
                         <input
                           type="date"
                           value={startDate}
                           onChange={(e) => setStartDate(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">结束日期</label>
+                        <label className="block mb-1 text-xs font-medium text-gray-600">结束日期</label>
                         <input
                           type="date"
                           value={endDate}
                           onChange={(e) => setEndDate(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <Button
