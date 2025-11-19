@@ -5,8 +5,8 @@ import { Header } from '@/components/header';
 import { RoleProvider } from '@/contexts/role-context';
 
 export const metadata = {
-  title: 'RepRise - 管家销售赋能平台',
-  description: '帮助线下防水维修服务的管家快速成长为高效签单销售'
+  title: 'RevRise - 营收赋能系统',
+  description: '连接培训、对话分析、教练与业绩，用行为驱动营收增长'
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
