@@ -77,7 +77,7 @@ export function Sidebar() {
           </button>
 
           {/* 子菜单 */}
-          {isExpanded && (
+          {isExpanded && item.children && (
             <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-2">
               {item.children.map(child => renderNavItem(child, level + 1))}
             </div>
