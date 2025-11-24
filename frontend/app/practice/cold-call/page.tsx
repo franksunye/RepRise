@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,8 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import Link from 'next/link';
+import { getCurrentUser, addRolePlaySession, addTranscriptEntries, updateRolePlaySession, addNote } from '@/data/mock-data';
+import type { RolePlaySession, TranscriptEntry, Note } from '@/types';
 
 const scenarios = [
   {
@@ -51,6 +53,13 @@ export default function ColdCallPracticePage() {
   const [messages, setMessages] = useState<Array<{ role: 'ai' | 'user'; content: string }>>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [showScript, setShowScript] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const startTsRef = useRef<number | null>(null);
+  const currentUser = getCurrentUser();
 
   const handleStartPractice = (scenarioId: number) => {
     setSelectedScenario(scenarioId);
@@ -61,6 +70,28 @@ export default function ColdCallPracticePage() {
         content: '喂？哪位？',
       },
     ]);
+
+    // 创建会话
+    const scenario = scenarios.find((s) => s.id === scenarioId);
+    const id = `rps-${Date.now()}`;
+    const session: RolePlaySession = {
+      id,
+      repId: currentUser.id,
+      type: 'cold-call',
+      title: scenario?.title,
+      description: scenario?.description,
+      persona: scenario?.customerProfile || '客户',
+      scenario: '首次联系',
+      startedAt: new Date().toISOString(),
+      status: 'in-progress',
+      roundCount: 0,
+    };
+    addRolePlaySession(session);
+    setSessionId(id);
+    startTsRef.current = performance.now();
+
+    // 启动录音
+    startRecording();
   };
 
   const handleSendMessage = () => {
@@ -80,12 +111,104 @@ export default function ColdCallPracticePage() {
       const randomResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
       setMessages((prev) => [...prev, { role: 'ai', content: randomResponse }]);
     }, 1000);
+
+    // 保存转录条目（模拟）
+    if (sessionId) {
+      const now = performance.now();
+      const base = Math.floor((now - (startTsRef.current || now)));
+      const entries: TranscriptEntry[] = [
+        {
+          id: `te-${Date.now()}-u`,
+          sessionId,
+          speaker: 'rep',
+          startMs: base,
+          endMs: base + Math.max(1500, inputMessage.length * 60),
+          text: inputMessage,
+        },
+      ];
+      addTranscriptEntries(entries);
+      updateRolePlaySession(sessionId, { roundCount: Math.floor((messages.length + 1) / 2) });
+    }
   };
 
   const handleReset = () => {
     setIsStarted(false);
     setSelectedScenario(null);
     setMessages([]);
+    setInputMessage('');
+    setSessionId(null);
+    stopRecording(true);
+    setAudioUrl(null);
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+      audioChunksRef.current = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        setAudioUrl(url);
+      };
+      recorder.start();
+      setIsRecording(true);
+    } catch (e) {
+      setIsRecording(false);
+    }
+  };
+
+  const pauseRecording = () => {
+    const r = mediaRecorderRef.current;
+    if (!r) return;
+    if (r.state === 'recording') {
+      r.pause();
+      setIsPaused(true);
+    }
+  };
+
+  const resumeRecording = () => {
+    const r = mediaRecorderRef.current;
+    if (!r) return;
+    if (r.state === 'paused') {
+      r.resume();
+      setIsPaused(false);
+    }
+  };
+
+  const stopRecording = (silent?: boolean) => {
+    const r = mediaRecorderRef.current;
+    if (r && (r.state === 'recording' || r.state === 'paused')) {
+      r.stop();
+    }
+    setIsRecording(false);
+    if (!silent && sessionId) {
+      const now = performance.now();
+      const start = startTsRef.current || now;
+      updateRolePlaySession(sessionId, {
+        status: 'completed',
+        endedAt: new Date().toISOString(),
+        durationMs: Math.floor(now - start),
+      });
+    }
+  };
+
+  const addPracticeNote = () => {
+    const text = inputMessage.trim();
+    if (!text || !sessionId) return;
+    const note: Note = {
+      id: `note-${Date.now()}`,
+      sessionId,
+      authorRole: 'rep',
+      authorId: currentUser.id,
+      text,
+      createdAt: new Date().toISOString(),
+    };
+    addNote(note);
     setInputMessage('');
   };
 
@@ -198,9 +321,19 @@ export default function ColdCallPracticePage() {
                   >
                     {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                   </Button>
-                  <Button variant="ghost" size="icon">
-                    <Volume2 className="h-5 w-5" />
-                  </Button>
+                  {!isRecording ? (
+                    <Button variant="ghost" size="icon" onClick={startRecording}>
+                      <Play className="h-5 w-5" />
+                    </Button>
+                  ) : isPaused ? (
+                    <Button variant="ghost" size="icon" onClick={resumeRecording}>
+                      <Play className="h-5 w-5" />
+                    </Button>
+                  ) : (
+                    <Button variant="ghost" size="icon" onClick={pauseRecording}>
+                      <Pause className="h-5 w-5" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardHeader>
@@ -239,6 +372,7 @@ export default function ColdCallPracticePage() {
                 <Button onClick={handleSendMessage}>
                   <Send className="h-4 w-4" />
                 </Button>
+                <Button variant="outline" onClick={addPracticeNote}>添加笔记</Button>
               </div>
             </div>
           </Card>
@@ -307,6 +441,20 @@ export default function ColdCallPracticePage() {
               <p>• 确认具体预约时间</p>
             </CardContent>
           </Card>
+          {/* Audio Player */}
+          {audioUrl && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">录音回放</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <audio controls src={audioUrl} className="w-full" />
+                <div className="mt-2 flex items-center gap-2">
+                  <Button size="sm" onClick={() => stopRecording()}>结束练习</Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

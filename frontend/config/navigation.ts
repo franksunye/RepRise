@@ -50,6 +50,8 @@ export const navigation: RoleNavigation = {
       children: [
         { name: '微课程', href: '/onboarding', icon: BookOpen },
         { name: '角色扮演', href: '/practice', icon: MessageSquare },
+        { name: '会话管理', href: '/practice/sessions', icon: MessageSquare },
+        { name: '开始练习', href: '/practice/start', icon: MessageSquare },
         { name: '反思日志', href: '/reflection', icon: FileText },
         { name: '内容库', href: '/playbook', icon: BookOpen },
       ],
@@ -168,4 +170,3 @@ export const navigation: RoleNavigation = {
     },
   ],
 };
-

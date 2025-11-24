@@ -1,4 +1,4 @@
-import { Rep, Coach, Practice, CoachingTask, PlaybookItem, KPIData, Notification, LearningPath, Course, UserCourseProgress, SkillScore, TrendDataPoint, PracticeTypeStats, Feedback, ActionItem } from '@/types';
+import { Rep, Coach, Practice, CoachingTask, PlaybookItem, KPIData, Notification, LearningPath, Course, UserCourseProgress, SkillScore, TrendDataPoint, PracticeTypeStats, Feedback, ActionItem, RolePlaySession, TranscriptEntry, Note, FlaggedSegment } from '@/types';
 
 // 管家数据 (15名)
 export const mockReps: Rep[] = [
@@ -986,3 +986,122 @@ export const getActionItemsByRepId = (repId: string) =>
 // =================================================================
 // END: Jules's additions for coach feedback feature
 // =================================================================
+
+// ================================================================
+// Role-play 会话 / 转录 / 注释 / 标注（Mock）
+// ================================================================
+
+// 会话列表（示例数据）
+export const mockRolePlaySessions: RolePlaySession[] = [
+  {
+    id: 'rps-1',
+    repId: 'rep-1',
+    type: 'cold-call',
+    title: '首次电话沟通 - 价格敏感客户',
+    description: '建立信任并预约上门，避免直接报价',
+    persona: '价格敏感型客户',
+    scenario: '首次联系/预约',
+    startedAt: '2024-11-17T09:00:00Z',
+    endedAt: '2024-11-17T09:15:00Z',
+    status: 'completed',
+    durationMs: 15 * 60 * 1000,
+    roundCount: 8,
+  },
+  {
+    id: 'rps-2',
+    repId: 'rep-1',
+    type: 'pricing',
+    title: '报价谈判 - 忙碌决策者',
+    description: '快速价值呈现与异议处理',
+    persona: '忙碌的决策者',
+    scenario: '报价与异议',
+    startedAt: '2024-11-18T10:00:00Z',
+    status: 'in-progress',
+    durationMs: 6 * 60 * 1000,
+    roundCount: 4,
+  },
+  {
+    id: 'rps-3',
+    repId: 'rep-1',
+    type: 'on-site',
+    title: '上门勘查 - 技术专家客户',
+    description: '通俗解释技术问题，建立专业形象',
+    persona: '技术专家',
+    scenario: '现场诊断',
+    startedAt: '2024-11-16T14:00:00Z',
+    endedAt: '2024-11-16T14:25:00Z',
+    status: 'completed',
+    durationMs: 25 * 60 * 1000,
+    roundCount: 10,
+  },
+];
+
+// 逐句转录（示例，仅针对 rps-1）
+export const mockTranscriptEntries: TranscriptEntry[] = [
+  { id: 'te-1', sessionId: 'rps-1', speaker: 'ai', startMs: 0, endMs: 2000, text: '喂？哪位？', confidence: 0.98 },
+  { id: 'te-2', sessionId: 'rps-1', speaker: 'rep', startMs: 2200, endMs: 7000, text: '您好，我是XX防水维修的管家张伟，想确认下您是不是王先生？', confidence: 0.96 },
+  { id: 'te-3', sessionId: 'rps-1', speaker: 'ai', startMs: 7200, endMs: 11000, text: '是的，家里卫生间最近有点漏水。', confidence: 0.97 },
+  { id: 'te-4', sessionId: 'rps-1', speaker: 'rep', startMs: 11400, endMs: 18000, text: '了解，我们可以安排免费上门勘查，您看明天下午两点方便吗？', confidence: 0.95 },
+  { id: 'te-5', sessionId: 'rps-1', speaker: 'ai', startMs: 18200, endMs: 22000, text: '可以，不过价格是不是很贵啊？', confidence: 0.94 },
+  { id: 'te-6', sessionId: 'rps-1', speaker: 'rep', startMs: 22400, endMs: 30000, text: '我们会根据实际情况给出详细方案与报价，先安排勘查更准确。', confidence: 0.93 },
+];
+
+// 笔记/注释（示例）
+export const mockNotes: Note[] = [
+  { id: 'note-1', sessionId: 'rps-1', entryId: 'te-5', authorRole: 'rep', authorId: 'rep-1', text: '客户对价格敏感，需价值铺垫', tags: ['pricing', 'value'], createdAt: '2024-11-17T09:08:00Z' },
+  { id: 'note-2', sessionId: 'rps-1', authorRole: 'coach', authorId: 'coach-1', text: '勘查前引导更明确的下一步', tags: ['no_next_step'], createdAt: '2024-11-17T09:16:00Z' },
+];
+
+// 片段标注（示例）
+export const mockFlaggedSegments: FlaggedSegment[] = [
+  { id: 'fs-1', sessionId: 'rps-1', startEntryId: 'te-5', labels: ['objection'], severity: 'medium', createdByRole: 'coach', createdById: 'coach-1', createdAt: '2024-11-17T09:16:30Z' },
+];
+
+// 获取会话列表（按 Rep）
+export const getRolePlaySessionsByRepId = (repId: string) =>
+  mockRolePlaySessions.filter(s => s.repId === repId);
+
+// 获取会话详情
+export const getRolePlaySessionById = (sessionId: string) =>
+  mockRolePlaySessions.find(s => s.id === sessionId);
+
+// 获取转录（按会话）
+export const getTranscriptEntriesBySessionId = (sessionId: string) =>
+  mockTranscriptEntries.filter(e => e.sessionId === sessionId);
+
+// 获取笔记（按会话）
+export const getNotesBySessionId = (sessionId: string) =>
+  mockNotes.filter(n => n.sessionId === sessionId);
+
+// 获取标注（按会话）
+export const getFlaggedSegmentsBySessionId = (sessionId: string) =>
+  mockFlaggedSegments.filter(f => f.sessionId === sessionId);
+
+// 追加写入（模拟持久化到内存）
+export const addRolePlaySession = (session: RolePlaySession) => {
+  mockRolePlaySessions.unshift(session);
+  return session;
+};
+
+export const updateRolePlaySession = (sessionId: string, patch: Partial<RolePlaySession>) => {
+  const idx = mockRolePlaySessions.findIndex(s => s.id === sessionId);
+  if (idx >= 0) {
+    mockRolePlaySessions[idx] = { ...mockRolePlaySessions[idx], ...patch };
+    return mockRolePlaySessions[idx];
+  }
+  return undefined;
+};
+
+export const addTranscriptEntries = (entries: TranscriptEntry[]) => {
+  mockTranscriptEntries.push(...entries);
+};
+
+export const addNote = (note: Note) => {
+  mockNotes.unshift(note);
+  return note;
+};
+
+export const addFlaggedSegment = (segment: FlaggedSegment) => {
+  mockFlaggedSegments.unshift(segment);
+  return segment;
+};

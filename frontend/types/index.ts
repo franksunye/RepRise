@@ -50,6 +50,58 @@ export interface Practice {
   };
 }
 
+// Role-play 会话
+export interface RolePlaySession {
+  id: string;
+  repId: string;
+  type: PracticeType;
+  title?: string;
+  description?: string;
+  persona: string; // 买家角色 Persona 名称
+  scenario: string; // 场景名称或标识
+  startedAt: string;
+  endedAt?: string;
+  status: 'not-started' | 'in-progress' | 'completed' | 'archived';
+  durationMs?: number;
+  roundCount?: number;
+}
+
+// 逐句转录条目
+export interface TranscriptEntry {
+  id: string;
+  sessionId: string;
+  speaker: 'rep' | 'ai';
+  startMs: number;
+  endMs: number;
+  text: string;
+  confidence?: number; // 可选识别置信度
+}
+
+// 练习中的笔记/注释
+export interface Note {
+  id: string;
+  sessionId: string;
+  entryId?: string; // 关联的转录条目（逐句）
+  authorRole: UserRole;
+  authorId: string;
+  text: string;
+  tags?: string[];
+  createdAt: string;
+}
+
+// 标记的关键片段（用于教练信号/行动建议关联）
+export interface FlaggedSegment {
+  id: string;
+  sessionId: string;
+  startEntryId: string;
+  endEntryId?: string;
+  labels: string[]; // 如 'objection', 'no_next_step', 'engagement'
+  severity?: 'low' | 'medium' | 'high';
+  createdByRole: UserRole;
+  createdById: string;
+  createdAt: string;
+}
+
 // 辅导任务
 export interface CoachingTask {
   id: string;
