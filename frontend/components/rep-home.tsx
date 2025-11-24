@@ -200,9 +200,9 @@ export function RepHome() {
                             </div>
                           </div>
                         </div>
-                        <Button size="sm" onClick={(e) => e.preventDefault()}>
-                          查看 <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary">
+                          查看 <ArrowRight className="h-4 w-4" />
+                        </div>
                       </div>
                     </Link>
                   );
