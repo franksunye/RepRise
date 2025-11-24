@@ -81,9 +81,10 @@ export default function TasksPage() {
                         </span>
                       </div>
                     </div>
-                    <Button size="sm" onClick={(e) => e.preventDefault()}>
+                    <div className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary">
                       {task.status === 'pending' ? '开始任务' : task.status === 'in-progress' ? '继续' : '查看'}
-                    </Button>
+                      <ArrowRight className="h-4 w-4" />
+                    </div>
                   </div>
                 </div>
               </Link>
