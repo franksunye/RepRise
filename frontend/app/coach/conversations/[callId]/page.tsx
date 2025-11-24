@@ -119,13 +119,13 @@ export default function CoachConversationDetailPage() {
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5 text-blue-600" /> 摘要、高亮与转录
           </CardTitle>
-          <CardDescription>从摘要与高亮快速导航到逐句转录</CardDescription>
+          <CardDescription>从摘要与高亮快速导航到逐句转录；播放录音并按句浏览转录，支持片段标记</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="summary">
             <TabsList>
               <TabsTrigger value="summary">摘要 & 高亮</TabsTrigger>
-              <TabsTrigger value="transcript">转录</TabsTrigger>
+              <TabsTrigger value="transcript">转录与播放器</TabsTrigger>
               <TabsTrigger value="signals">信号</TabsTrigger>
             </TabsList>
 
@@ -223,35 +223,6 @@ export default function CoachConversationDetailPage() {
               <Target className="h-4 w-4 mr-2" /> 记录反馈
             </Link>
           </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-blue-600" /> 转录与播放器
-          </CardTitle>
-          <CardDescription>播放录音并按句浏览转录，支持片段标记</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2 mb-3">
-            <Button variant="outline" size="sm"><Play className="h-4 w-4 mr-2" /> 播放</Button>
-            <Button variant="ghost" size="sm"><Pause className="h-4 w-4 mr-2" /> 暂停</Button>
-          </div>
-          <div className="space-y-2">
-            {transcript.map((e: CallTranscriptEntry) => (
-              <div key={e.id} className="p-3 border rounded-lg">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <Badge variant={e.speaker === 'rep' ? 'default' : 'outline'}>{e.speaker === 'rep' ? 'Rep' : '客户'}</Badge>
-                    <span>{(e.startMs / 1000).toFixed(1)}s</span>
-                  </div>
-                  <Button size="sm" variant="ghost"><Flag className="h-4 w-4 mr-2" /> 标记片段</Button>
-                </div>
-                <p className="text-sm mt-2">{e.text}</p>
-              </div>
-            ))}
-          </div>
         </CardContent>
       </Card>
     </div>
