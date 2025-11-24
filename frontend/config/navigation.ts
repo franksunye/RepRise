@@ -108,6 +108,7 @@ export const navigation: RoleNavigation = {
       icon: Users,
       children: [
         { name: '教练仪表盘', href: '/coach/dashboard', icon: BarChart3 },
+        { name: '教练收件箱', href: '/coach/inbox', icon: MessageSquare },
         { name: '管家管理', href: '/coach/reps', icon: Users },
         { name: '辅导任务', href: '/coach/tasks', icon: ClipboardList },
         { name: '反馈标注', href: '/coach/feedback', icon: MessageSquare },
