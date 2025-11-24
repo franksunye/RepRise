@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Clock, Calendar, Target, AlertCircle, CheckCircle } from 'lucide-react';
+import { Clock, Calendar, Target, AlertCircle, CheckCircle, ArrowRight } from 'lucide-react';
 import { getUserTasks, getCurrentUser } from '@/data/mock-data';
 
 export default function TasksPage() {
