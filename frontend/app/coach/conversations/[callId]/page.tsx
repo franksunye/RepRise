@@ -41,6 +41,16 @@ export default function CoachConversationDetailPage() {
       default: return 'outline';
     }
   };
+  const typeLabel = (t: string) => {
+    switch (t) {
+      case 'objection': return '异议';
+      case 'no_next_step': return '无下一步';
+      case 'engagement': return '低参与度';
+      case 'buying': return '购买意向';
+      case 'competitor': return '竞品提及';
+      default: return t;
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -106,9 +116,9 @@ export default function CoachConversationDetailPage() {
           <div>
             <p className="text-sm font-medium text-gray-700 mb-2">可教点</p>
             <div className="flex items-center gap-2 text-sm">
-              <Badge variant="outline">objection</Badge>
-              <Badge variant="outline">no_next_step</Badge>
-              <Badge variant="outline">engagement</Badge>
+              <Badge variant="outline">异议</Badge>
+              <Badge variant="outline">无下一步</Badge>
+              <Badge variant="outline">低参与度</Badge>
             </div>
           </div>
         </CardContent>
@@ -145,7 +155,7 @@ export default function CoachConversationDetailPage() {
                       <div key={s.id} className="p-3 border rounded-lg">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <Badge variant={typeBadgeVariant(s.type)}>{s.type}</Badge>
+                            <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
                             <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{s.severity}</Badge>
                             {anchor && (
                               <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
@@ -193,7 +203,7 @@ export default function CoachConversationDetailPage() {
                 {signals.map((s) => (
                   <div key={s.id} className="p-3 border rounded-lg">
                     <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <Badge variant="outline">{s.type}</Badge>
+                      <Badge variant="outline">{typeLabel(s.type)}</Badge>
                       <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{s.severity}</Badge>
                     </div>
                     <p className="text-sm mt-2">{s.snippet}</p>

@@ -84,7 +84,7 @@ export default function CoachTaskCreatePage() {
           <div>
             <p className="text-sm font-medium text-gray-700 mb-2">关联信号（可选）</p>
             <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Badge variant="outline">objection</Badge>
+              <Badge variant="outline">异议</Badge>
               <span>“价格太高了，我再考虑一下。”</span>
               <Button size="sm" variant="link" className="h-6 p-0">更改</Button>
             </div>
