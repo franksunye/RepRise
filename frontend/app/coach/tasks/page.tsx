@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -296,7 +297,9 @@ export default function CoachTasksPage() {
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <h4 className="font-medium text-gray-900">{task.title}</h4>
+                            <Link href={`/coach/tasks/${task.id}`} className="font-medium text-gray-900 hover:text-primary hover:underline">
+                              {task.title}
+                            </Link>
                             {isOverdue && (
                               <Badge variant="destructive" className="text-xs">已逾期</Badge>
                             )}
@@ -337,8 +340,11 @@ export default function CoachTasksPage() {
                           variant="ghost"
                           title="查看详情"
                           className="h-8 w-8 p-0"
+                          asChild
                         >
-                          <Eye className="h-4 w-4" />
+                          <Link href={`/coach/tasks/${task.id}`}>
+                            <Eye className="h-4 w-4" />
+                          </Link>
                         </Button>
                         <Button
                           size="sm"
