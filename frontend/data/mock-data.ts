@@ -653,6 +653,11 @@ export const getUserScoreTrend = (userId: string) =>
 export const getUserPracticeTypeStats = (userId: string) =>
   mockPracticeTypeStats[userId] || [];
 
+
+// =================================================================
+// START: Jules's additions for coach feedback feature
+// =================================================================
+
 // 教练反馈数据
 export const mockFeedbacks: Feedback[] = [
   {
@@ -733,3 +738,7 @@ export const getFeedbackById = (feedbackId: string) =>
 // 根据反馈ID获取行动建议
 export const getActionItemsByFeedbackId = (feedbackId: string) =>
   mockActionItems.filter(a => a.feedbackId === feedbackId);
+
+// =================================================================
+// END: Jules's additions for coach feedback feature
+// =================================================================
