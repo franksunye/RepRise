@@ -5,35 +5,54 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { 
-  ArrowRight, 
-  Phone, 
-  Home as HomeIcon, 
-  DollarSign, 
+import {
+  ArrowRight,
+  Phone,
+  Home as HomeIcon,
+  DollarSign,
   TrendingUp,
   Clock,
   Target,
   Award,
-  BookOpen
+  BookOpen,
+  CheckCircle,
+  MessageSquare,
+  Calendar,
+  Star
 } from 'lucide-react';
-import { 
-  getUserTasks, 
+import {
+  getUserTasks,
   getUserKPI,
   getUserPractices,
-  mockReps
+  mockReps,
+  getActionItemsByRepId,
+  getFeedbacksByRepId,
+  getCurrentUser
 } from '@/data/mock-data';
 
 export function RepHome() {
-  const currentUser = mockReps[0]; // 管家用户
+  const currentUser = getCurrentUser();
   const tasks = getUserTasks(currentUser.id);
   const weeklyKPI = getUserKPI(currentUser.id, 'week');
   const practices = getUserPractices(currentUser.id);
-  
+  const actionItems = getActionItemsByRepId(currentUser.id);
+  const feedbacks = getFeedbacksByRepId(currentUser.id);
+
   // 计算今日任务
   const todayTasks = tasks.filter(t => t.status === 'pending' || t.status === 'in-progress').slice(0, 3);
-  
+
   // 最近的练习
   const recentPractices = practices.slice(0, 3);
+
+  // 待处理的行动建议
+  const pendingActionItems = actionItems
+    .filter(a => a.status === 'pending' || a.status === 'in_progress')
+    .slice(0, 3);
+
+  // 最新反馈
+  const recentFeedbacks = feedbacks
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .slice(0, 3);
 
   return (
     <div className="p-6 space-y-6">
@@ -136,53 +155,64 @@ export function RepHome() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {todayTasks.map((task) => {
-                const icons = {
-                  'cold-call': Phone,
-                  'follow-up': Phone,
-                  'on-site': HomeIcon,
-                  'pricing': DollarSign,
-                  'objection': Target,
-                };
-                const Icon = icons[task.type];
-                const colors = {
-                  'cold-call': 'blue',
-                  'follow-up': 'blue',
-                  'on-site': 'green',
-                  'pricing': 'purple',
-                  'objection': 'orange',
-                };
-                const color = colors[task.type];
+              {todayTasks.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <Target className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                  <p>暂无待完成任务</p>
+                </div>
+              ) : (
+                todayTasks.map((task) => {
+                  const icons = {
+                    'cold-call': Phone,
+                    'follow-up': Phone,
+                    'on-site': HomeIcon,
+                    'pricing': DollarSign,
+                    'objection': Target,
+                  };
+                  const Icon = icons[task.type];
+                  const colors = {
+                    'cold-call': 'blue',
+                    'follow-up': 'blue',
+                    'on-site': 'green',
+                    'pricing': 'purple',
+                    'objection': 'orange',
+                  };
+                  const color = colors[task.type];
 
-                return (
-                  <div
-                    key={task.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className={`h-10 w-10 rounded-lg bg-${color}-100 flex items-center justify-center`}>
-                        <Icon className={`h-5 w-5 text-${color}-600`} />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium">{task.title}</p>
-                          {task.priority === 'high' && (
-                            <Badge variant="destructive" className="text-xs">高优先级</Badge>
-                          )}
+                  return (
+                    <Link key={task.id} href={`/tasks/${task.id}`}>
+                      <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                        <div className="flex items-center gap-3 flex-1">
+                          <div className={`h-10 w-10 rounded-lg bg-${color}-100 flex items-center justify-center`}>
+                            <Icon className={`h-5 w-5 text-${color}-600`} />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium">{task.title}</p>
+                              {task.priority === 'high' && (
+                                <Badge variant="destructive" className="text-xs">高优先级</Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-600 line-clamp-1">{task.description}</p>
+                            <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                              <Clock className="h-3 w-3" />
+                              <span>截止日期: {new Date(task.dueDate).toLocaleDateString('zh-CN')}</span>
+                            </div>
+                          </div>
                         </div>
-                        <p className="text-sm text-gray-600">{task.description}</p>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                          <Clock className="h-3 w-3" />
-                          <span>截止日期: {new Date(task.dueDate).toLocaleDateString('zh-CN')}</span>
-                        </div>
+                        <Button size="sm" onClick={(e) => e.preventDefault()}>
+                          查看 <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
                       </div>
-                    </div>
-                    <Button size="sm">
-                      开始 <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                );
-              })}
+                    </Link>
+                  );
+                })
+              )}
+              <Link href="/tasks">
+                <Button variant="outline" className="w-full mt-4">
+                  查看全部任务
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
@@ -220,6 +250,124 @@ export function RepHome() {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Action Items and Feedbacks */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* My Action Items */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  我的行动建议
+                </CardTitle>
+                <CardDescription>教练建议你完成的行动项</CardDescription>
+              </div>
+              <Badge variant="outline">{pendingActionItems.length} 个待完成</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {pendingActionItems.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <CheckCircle className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                <p>暂无行动建议</p>
+                <p className="text-sm mt-1">教练会给你任务后这里显示改进建议</p>
+              </div>
+            ) : (
+              <>
+                {pendingActionItems.map((item) => {
+                  const isOverdue = new Date(item.dueDate) < new Date() && item.status !== 'done';
+                  return (
+                    <div
+                      key={item.id}
+                      className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`mt-1 ${item.status === 'in_progress' ? 'text-yellow-500' : 'text-gray-400'}`}>
+                          <CheckCircle className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900 line-clamp-2">{item.description}</p>
+                          <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
+                            <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-600 font-medium' : ''}`}>
+                              <Calendar className="h-3 w-3" />
+                              截止: {item.dueDate}
+                            </span>
+                            <Badge
+                              variant={item.status === 'in_progress' ? 'outline' : 'secondary'}
+                              className="text-xs"
+                            >
+                              {item.status === 'in_progress' ? '进行中' : '待处理'}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                <Link href="/tasks">
+                  <Button variant="outline" className="w-full mt-4">
+                    查看全部行动建议
+                  </Button>
+                </Link>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Feedbacks */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-blue-500" />
+                  最新反馈
+                </CardTitle>
+                <CardDescription>教练给你的最新反馈</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {recentFeedbacks.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <MessageSquare className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                <p>暂无反馈</p>
+                <p className="text-sm mt-1">教练会在这里给你反馈和建议</p>
+              </div>
+            ) : (
+              <>
+                {recentFeedbacks.map((feedback) => (
+                  <Link key={feedback.id} href={`/coaching/feedback/${feedback.id}`}>
+                    <div className="p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                      <div className="flex items-start justify-between mb-2">
+                        <Badge variant="secondary" className="text-xs">{feedback.source}</Badge>
+                        {feedback.score && (
+                          <div className="flex items-center gap-1">
+                            <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                            <span className="text-sm font-bold text-yellow-700">{feedback.score}</span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-700 line-clamp-2 mb-2">{feedback.content}</p>
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <Clock className="h-3 w-3" />
+                        <span>{new Date(feedback.timestamp).toLocaleDateString('zh-CN')}</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+                <Link href="/coaching/feedback">
+                  <Button variant="outline" className="w-full mt-4">
+                    查看全部反馈
+                  </Button>
+                </Link>
+              </>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Quick Actions */}
