@@ -265,6 +265,9 @@ export const mockTasks: CoachingTask[] = [
     status: 'in-progress',
     priority: 'high',
     createdAt: '2024-11-15T08:00:00',
+    relatedSignalIds: ['sig-1', 'sig-4'],
+    relatedFeedbackIds: ['feedback-1'],
+    relatedActionItemIds: ['action-item-1', 'action-item-2'],
   },
   {
     id: 'task-2',
@@ -277,6 +280,8 @@ export const mockTasks: CoachingTask[] = [
     status: 'pending',
     priority: 'medium',
     createdAt: '2024-11-16T10:00:00',
+    relatedFeedbackIds: ['feedback-2'],
+    relatedActionItemIds: ['action-item-3'],
   },
   {
     id: 'task-3',
@@ -289,6 +294,9 @@ export const mockTasks: CoachingTask[] = [
     status: 'pending',
     priority: 'high',
     createdAt: '2024-11-17T09:00:00',
+    relatedSignalIds: ['sig-1'],
+    relatedFeedbackIds: ['feedback-3'],
+    relatedActionItemIds: ['action-item-4'],
   },
   {
     id: 'task-4',
@@ -301,6 +309,9 @@ export const mockTasks: CoachingTask[] = [
     status: 'pending',
     priority: 'high',
     createdAt: '2024-11-10T08:00:00',
+    relatedSignalIds: ['sig-1', 'sig-2'],
+    relatedFeedbackIds: ['feedback-4'],
+    relatedActionItemIds: ['action-item-5', 'action-item-6'],
   },
   {
     id: 'task-5',
@@ -313,6 +324,8 @@ export const mockTasks: CoachingTask[] = [
     status: 'in-progress',
     priority: 'medium',
     createdAt: '2024-11-14T10:00:00',
+    relatedFeedbackIds: ['feedback-7'],
+    relatedActionItemIds: ['action-item-9'],
   },
   {
     id: 'task-6',
@@ -325,6 +338,8 @@ export const mockTasks: CoachingTask[] = [
     status: 'pending',
     priority: 'medium',
     createdAt: '2024-11-16T14:00:00',
+    relatedFeedbackIds: ['feedback-9'],
+    relatedActionItemIds: ['action-item-10', 'action-item-11'],
   },
   {
     id: 'task-7',
@@ -337,6 +352,8 @@ export const mockTasks: CoachingTask[] = [
     status: 'in-progress',
     priority: 'high',
     createdAt: '2024-11-12T09:00:00',
+    relatedFeedbackIds: ['feedback-5'],
+    relatedActionItemIds: ['action-item-7', 'action-item-8'],
   },
   {
     id: 'task-8',
@@ -349,6 +366,7 @@ export const mockTasks: CoachingTask[] = [
     status: 'pending',
     priority: 'medium',
     createdAt: '2024-11-13T11:00:00',
+    relatedFeedbackIds: ['feedback-6'],
   },
 ];
 
@@ -855,6 +873,7 @@ export const mockActionItems: ActionItem[] = [
   {
     id: 'action-item-1',
     feedbackId: 'feedback-1',
+    repId: 'rep-1',
     description: '学习并练习三种不同的开放式提问技巧。',
     status: 'pending',
     dueDate: '2024-11-22',
@@ -862,6 +881,7 @@ export const mockActionItems: ActionItem[] = [
   {
     id: 'action-item-2',
     feedbackId: 'feedback-1',
+    repId: 'rep-1',
     description: '完成一次关于“价值销售”的微课程学习。',
     status: 'in_progress',
     dueDate: '2024-11-25',
@@ -869,6 +889,7 @@ export const mockActionItems: ActionItem[] = [
   {
     id: 'action-item-3',
     feedbackId: 'feedback-2',
+    repId: 'rep-2',
     description: '观看《如何自信地沟通》视频，并提交学习心得。',
     status: 'done',
     dueDate: '2024-11-20',
@@ -876,6 +897,7 @@ export const mockActionItems: ActionItem[] = [
     {
     id: 'action-item-4',
     feedbackId: 'feedback-3',
+    repId: 'rep-1',
     description: '整理一套自己的价值铺垫话术，并与教练进行一次1对1演练。',
     status: 'pending',
     dueDate: '2024-11-24',
@@ -883,6 +905,7 @@ export const mockActionItems: ActionItem[] = [
   {
     id: 'action-item-5',
     feedbackId: 'feedback-4',
+    repId: 'rep-3',
     description: '学习"价值对标法"和"分期付款方案"的销售话术。',
     status: 'pending',
     dueDate: '2024-11-26',
@@ -890,6 +913,7 @@ export const mockActionItems: ActionItem[] = [
   {
     id: 'action-item-6',
     feedbackId: 'feedback-4',
+    repId: 'rep-3',
     description: '进行2次以上关于异议处理的角色扮演练习。',
     status: 'in_progress',
     dueDate: '2024-11-28',
@@ -897,6 +921,7 @@ export const mockActionItems: ActionItem[] = [
   {
     id: 'action-item-7',
     feedbackId: 'feedback-5',
+    repId: 'rep-4',
     description: '练习主动提出多个解决方案选项的表达方式。',
     status: 'pending',
     dueDate: '2024-11-23',
@@ -904,6 +929,7 @@ export const mockActionItems: ActionItem[] = [
   {
     id: 'action-item-8',
     feedbackId: 'feedback-5',
+    repId: 'rep-4',
     description: '完成"解决方案销售"在线课程。',
     status: 'pending',
     dueDate: '2024-11-30',
@@ -911,6 +937,7 @@ export const mockActionItems: ActionItem[] = [
   {
     id: 'action-item-9',
     feedbackId: 'feedback-7',
+    repId: 'rep-3',
     description: '制定一份跟进客户的标准话术和流程模板。',
     status: 'pending',
     dueDate: '2024-11-27',
@@ -918,6 +945,7 @@ export const mockActionItems: ActionItem[] = [
   {
     id: 'action-item-10',
     feedbackId: 'feedback-9',
+    repId: 'rep-2',
     description: '学习"假定成交法"和"选择性成交法"。',
     status: 'pending',
     dueDate: '2024-11-25',
@@ -925,6 +953,7 @@ export const mockActionItems: ActionItem[] = [
   {
     id: 'action-item-11',
     feedbackId: 'feedback-9',
+    repId: 'rep-2',
     description: '进行3次关于关闭技巧的模拟成交练习。',
     status: 'in_progress',
     dueDate: '2024-11-29',
@@ -941,6 +970,18 @@ export const getFeedbackById = (feedbackId: string) =>
 // 根据反馈ID获取行动建议
 export const getActionItemsByFeedbackId = (feedbackId: string) =>
   mockActionItems.filter(a => a.feedbackId === feedbackId);
+
+// 根据ID获取任务
+export const getTaskById = (taskId: string) =>
+  mockTasks.find(t => t.id === taskId);
+
+// 根据 Rep ID 获取反馈
+export const getFeedbacksByRepId = (repId: string) =>
+  mockFeedbacks.filter(f => f.repId === repId);
+
+// 根据 Rep ID 获取行动建议
+export const getActionItemsByRepId = (repId: string) =>
+  mockActionItems.filter(a => a.repId === repId);
 
 // =================================================================
 // END: Jules's additions for coach feedback feature

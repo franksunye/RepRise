@@ -62,6 +62,9 @@ export interface CoachingTask {
   status: 'pending' | 'in-progress' | 'completed' | 'overdue';
   priority: 'low' | 'medium' | 'high';
   createdAt: string;
+  relatedSignalIds?: string[]; // 关联的教练信号 IDs
+  relatedFeedbackIds?: string[]; // 关联的反馈 IDs
+  relatedActionItemIds?: string[]; // 关联的行动建议 IDs
 }
 
 // 内容库项目
@@ -184,6 +187,7 @@ export interface Feedback {
 export interface ActionItem {
   id: string;
   feedbackId: string; // 关联的 Feedback ID
+  repId: string; // 分配给的 Rep ID
   description: string;
   status: ActionItemStatus;
   dueDate: string;
