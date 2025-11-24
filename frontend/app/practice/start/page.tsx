@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,6 +41,7 @@ export default function PracticeStartPage() {
   };
 
   return (
+    <Suspense fallback={null}>
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
@@ -154,5 +155,6 @@ export default function PracticeStartPage() {
         </Link>
       </div>
     </div>
+    </Suspense>
   );
 }

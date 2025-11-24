@@ -1,5 +1,6 @@
 import './globals.css';
 import type { ReactNode } from 'react';
+import { Suspense } from 'react';
 import { Sidebar } from '@/components/sidebar';
 import { Header } from '@/components/header';
 import { RoleProvider } from '@/contexts/role-context';
@@ -22,7 +23,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <div className="flex-1 flex flex-col overflow-hidden">
               <Header />
               <main className="flex-1 overflow-y-auto bg-gray-50">
-                {children}
+                <Suspense fallback={null}>{children}</Suspense>
               </main>
             </div>
           </div>

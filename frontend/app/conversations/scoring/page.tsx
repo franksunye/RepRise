@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getCurrentUser, getCallRecordsByRepId, getBehaviorMetricsByCallId } from '@/data/mock-data';
-import { Award, TrendingUp, BarChart3, Clock } from 'lucide-react';
+import { TrendingUp, BarChart3 } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function RepScoringPage() {
