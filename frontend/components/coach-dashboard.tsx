@@ -30,7 +30,7 @@ export function CoachDashboard() {
   const myReps = mockReps.filter(rep => currentCoach.reps.includes(rep.id));
   const pendingTasks = mockTasks.filter(task =>
     task.coachId === currentCoach.id && (task.status === 'pending' || task.status === 'in-progress')
-  ).slice(0, 5); // Displaying top 5 pending tasks for brevity
+  ).slice(0, 8); // Displaying top 8 pending tasks
 
   return (
     <div className="p-6 space-y-6 bg-gray-50/50">
@@ -81,7 +81,7 @@ export function CoachDashboard() {
                   const rep = myReps.find(r => r.id === task.repId);
                   const isOverdue = new Date(task.dueDate) < new Date() && task.status !== 'completed';
                   return (
-                    <Link href="#" key={task.id} className="block p-3 -mx-3 transition-all border border-transparent rounded-lg hover:border-gray-200 hover:bg-gray-50">
+                    <Link href={`/coach/tasks/${task.id}`} key={task.id} className="block p-3 -mx-3 transition-all border border-transparent rounded-lg hover:border-gray-200 hover:bg-gray-50">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                            <Avatar className="w-8 h-8">
