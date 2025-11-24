@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
-import { mockReps, mockTasks, mockPractices, mockCoaches, mockCoachingSignals, mockFeedback } from '@/data/mock-data';
+import { mockReps, mockTasks, mockPractices, mockCoaches, mockCoachingSignals, getAllFeedbacks } from '@/data/mock-data';
 import { getRealisticAvatarUrl, getInitials } from '@/lib/avatar';
 
 export function CoachDashboard() {
@@ -200,13 +200,13 @@ export function CoachDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {mockFeedback.slice(0, 3).map(fb => {
+                {getAllFeedbacks().slice(0, 3).map(fb => {
                   const rep = myReps.find(r => r.id === fb.repId);
                   return (
-                    <div key={fb.id} className="text-sm p-3 rounded-lg bg-gray-50 border">
-                      <p className="text-gray-800 break-words">&quot;{fb.summary}&quot;</p>
+                    <Link href={`/coach/feedback/${fb.id}`} key={fb.id} className="text-sm p-3 rounded-lg bg-gray-50 border hover:bg-gray-100 hover:border-gray-300 transition-colors block">
+                      <p className="text-gray-800 break-words line-clamp-2">&quot;{fb.content.substring(0, 80)}{fb.content.length > 80 ? '...' : ''}&quot;</p>
                       <p className="text-xs text-gray-500 text-right mt-1.5">- {rep?.name}</p>
-                    </div>
+                    </Link>
                   )
                 })}
               </div>
