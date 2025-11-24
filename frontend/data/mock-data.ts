@@ -664,18 +664,11 @@ export const mockCoachingSignals = [
   { id: 'sig-4', repId: 'rep-1', type: 'no_next_step', snippet: 'Just send me the proposal, I will check it later.', timestamp: '2024-11-16T16:00:00Z' },
 ];
 
-// Coaching Feedback (summary used by coach dashboard)
-export const mockFeedback = [
-  { id: 'fb-1', repId: 'rep-1', coachId: 'coach-1', summary: 'Great job handling the price objection. Try to focus more on value next time.', timestamp: '2024-11-17T12:00:00Z' },
-  { id: 'fb-2', repId: 'rep-2', coachId: 'coach-2', summary: 'Good rapport building, but remember to always establish a clear next step.', timestamp: '2024-11-17T11:30:00Z' },
-  { id: 'fb-3', repId: 'rep-3', coachId: 'coach-1', summary: 'Need to work on asking more engaging questions to keep the customer interested.', timestamp: '2024-11-16T15:00:00Z' },
-];
-
 // =================================================================
 // START: Jules's additions for coach feedback feature
 // =================================================================
 
-// 教练反馈数据
+// 教练反馈数据（统一的反馈系统）
 export const mockFeedbacks: Feedback[] = [
   {
     id: 'feedback-1',
@@ -711,6 +704,90 @@ export const mockFeedbacks: Feedback[] = [
     content: '这次的报价谈判练习非常成功！你成功地营造了紧迫感，并最终引导客户做出了决定。下次可以尝试在报价前做更多的价值铺垫。',
     version: '2.1',
   },
+  {
+    id: 'feedback-4',
+    source: 'Live Call',
+    sourceId: 'call-20241114-001',
+    repId: 'rep-3',
+    coachId: 'coach-1',
+    timestamp: '2024-11-14T14:20:00',
+    tags: ['电话技巧', '异议处理', '成交'],
+    content: '在这次电话中，你展现了很好的节奏控制，但在处理客户"价格太高"的异议时可以更有策略性。建议尝试价值对标法或分期付款方案来降低客户心理障碍。总体表现不错！',
+    score: 3,
+    version: '1.0',
+  },
+  {
+    id: 'feedback-5',
+    source: 'Role-play',
+    sourceId: 'practice-5',
+    repId: 'rep-4',
+    coachId: 'coach-2',
+    timestamp: '2024-11-13T10:15:00',
+    tags: ['倾听技巧', '需求发现'],
+    content: '你在这次角色扮演中展现了很好的倾听能力，能够深入挖掘客户的真实需求。但在给出解决方案时略显被动，建议更主动地提出 2-3 个选项让客户选择。',
+    score: 4,
+    version: '1.0',
+  },
+  {
+    id: 'feedback-6',
+    source: 'Live Call',
+    sourceId: 'call-20241112-002',
+    repId: 'rep-5',
+    coachId: 'coach-1',
+    timestamp: '2024-11-12T16:45:00',
+    tags: ['专业形象', '信任建立'],
+    content: '李娜在这次通话中表现专业，客户满意度很高。特别是在建立信任方面做得很好，能够清晰地解释我们的服务流程。继续保持这个势头！',
+    score: 5,
+    version: '1.0',
+  },
+  {
+    id: 'feedback-7',
+    source: 'Role-play',
+    sourceId: 'practice-7',
+    repId: 'rep-3',
+    coachId: 'coach-1',
+    timestamp: '2024-11-11T09:30:00',
+    tags: ['时间管理', '跟进管理'],
+    content: '这次练习中你在时间管理上有所进步，但跟进客户时应该建立更明确的下一步期望。例如，约定具体的回访时间和内容，而不是说"我会稍后联系你"。',
+    score: 3,
+    version: '1.1',
+  },
+  {
+    id: 'feedback-8',
+    source: 'Live Call',
+    sourceId: 'call-20241110-003',
+    repId: 'rep-6',
+    coachId: 'coach-2',
+    timestamp: '2024-11-10T13:00:00',
+    tags: ['产品知识', '场景应用'],
+    content: '你对我们的产品和服务了解充分，能够针对客户的具体情况提出有针对性的方案。只需要在压力处理上再多积累一些经验，当客户拒绝时不要过于被动。',
+    score: 4,
+    version: '1.0',
+  },
+  {
+    id: 'feedback-9',
+    source: 'Role-play',
+    sourceId: 'practice-9',
+    repId: 'rep-2',
+    coachId: 'coach-2',
+    timestamp: '2024-11-09T11:20:00',
+    tags: ['关闭技巧', '成交意愿'],
+    content: '在关闭方面，你有一定的进步。但在客户表现出购买意愿时，需要更坚定地促成交易，而不是继续询问。建议学习"假定成交法"和"选择性成交法"。',
+    score: 3,
+    version: '1.0',
+  },
+  {
+    id: 'feedback-10',
+    source: 'Live Call',
+    sourceId: 'call-20241108-004',
+    repId: 'rep-4',
+    coachId: 'coach-2',
+    timestamp: '2024-11-08T15:30:00',
+    tags: ['客户沟通', '异议处理'],
+    content: '你在这次通话中很好地处理了客户的多个异议，展现了冷静和专业的态度。客户最终同意了上门勘查，很好地推进了销售流程。继续发挥这样的水平！',
+    score: 5,
+    version: '1.0',
+  },
 ];
 
 // 行动建议数据
@@ -742,6 +819,55 @@ export const mockActionItems: ActionItem[] = [
     description: '整理一套自己的价值铺垫话术，并与教练进行一次1对1演练。',
     status: 'pending',
     dueDate: '2024-11-24',
+  },
+  {
+    id: 'action-item-5',
+    feedbackId: 'feedback-4',
+    description: '学习"价值对标法"和"分期付款方案"的销售话术。',
+    status: 'pending',
+    dueDate: '2024-11-26',
+  },
+  {
+    id: 'action-item-6',
+    feedbackId: 'feedback-4',
+    description: '进行2次以上关于异议处理的角色扮演练习。',
+    status: 'in_progress',
+    dueDate: '2024-11-28',
+  },
+  {
+    id: 'action-item-7',
+    feedbackId: 'feedback-5',
+    description: '练习主动提出多个解决方案选项的表达方式。',
+    status: 'pending',
+    dueDate: '2024-11-23',
+  },
+  {
+    id: 'action-item-8',
+    feedbackId: 'feedback-5',
+    description: '完成"解决方案销售"在线课程。',
+    status: 'pending',
+    dueDate: '2024-11-30',
+  },
+  {
+    id: 'action-item-9',
+    feedbackId: 'feedback-7',
+    description: '制定一份跟进客户的标准话术和流程模板。',
+    status: 'pending',
+    dueDate: '2024-11-27',
+  },
+  {
+    id: 'action-item-10',
+    feedbackId: 'feedback-9',
+    description: '学习"假定成交法"和"选择性成交法"。',
+    status: 'pending',
+    dueDate: '2024-11-25',
+  },
+  {
+    id: 'action-item-11',
+    feedbackId: 'feedback-9',
+    description: '进行3次关于关闭技巧的模拟成交练习。',
+    status: 'in_progress',
+    dueDate: '2024-11-29',
   },
 ];
 
