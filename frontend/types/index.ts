@@ -244,3 +244,45 @@ export interface ActionItem {
   status: ActionItemStatus;
   dueDate: string;
 }
+
+export interface CallRecord {
+  id: string;
+  repId: string;
+  customer: string;
+  title: string;
+  startedAt: string;
+  durationMs: number;
+  analyzed: boolean;
+  starred?: boolean;
+  tags?: string[];
+}
+
+export interface CallTranscriptEntry {
+  id: string;
+  callId: string;
+  speaker: 'rep' | 'customer';
+  startMs: number;
+  endMs: number;
+  text: string;
+}
+
+export type CallSignalType = 'objection' | 'no_next_step' | 'competitor' | 'buying' | 'engagement';
+
+export interface CallSignal {
+  id: string;
+  callId: string;
+  repId: string;
+  type: CallSignalType;
+  severity: 'low' | 'medium' | 'high';
+  timestamp: string;
+  snippet: string;
+}
+
+export interface BehaviorMetrics {
+  callId: string;
+  talkRatio: number;
+  listenRatio: number;
+  silenceCount: number;
+  questionCount: number;
+  sentimentScore?: number;
+}

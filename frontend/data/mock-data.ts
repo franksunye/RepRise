@@ -1,4 +1,4 @@
-import { Rep, Coach, Practice, CoachingTask, PlaybookItem, KPIData, Notification, LearningPath, Course, UserCourseProgress, SkillScore, TrendDataPoint, PracticeTypeStats, Feedback, ActionItem, RolePlaySession, TranscriptEntry, Note, FlaggedSegment } from '@/types';
+import { Rep, Coach, Practice, CoachingTask, PlaybookItem, KPIData, Notification, LearningPath, Course, UserCourseProgress, SkillScore, TrendDataPoint, PracticeTypeStats, Feedback, ActionItem, RolePlaySession, TranscriptEntry, Note, FlaggedSegment, CallRecord, CallTranscriptEntry, CallSignal, BehaviorMetrics } from '@/types';
 
 // 管家数据 (15名)
 export const mockReps: Rep[] = [
@@ -1104,4 +1104,51 @@ export const addNote = (note: Note) => {
 export const addFlaggedSegment = (segment: FlaggedSegment) => {
   mockFlaggedSegments.unshift(segment);
   return segment;
+};
+
+// ================================================================
+// Conversation Intelligence - Calls / Transcripts / Signals / Metrics (Mock)
+// ================================================================
+
+export const mockCallRecords: CallRecord[] = [
+  { id: 'call-20241117-001', repId: 'rep-1', customer: '王先生', title: '首次电话沟通 - 预约上门', startedAt: '2024-11-17T10:25:00Z', durationMs: 16 * 60 * 1000, analyzed: true, starred: true, tags: ['cold-call'] },
+  { id: 'call-20241116-002', repId: 'rep-1', customer: '李女士', title: '报价沟通 - 预算探讨', startedAt: '2024-11-16T15:40:00Z', durationMs: 21 * 60 * 1000, analyzed: true, tags: ['pricing'] },
+  { id: 'call-20241115-003', repId: 'rep-1', customer: '张先生', title: '跟进电话 - 方案确认', startedAt: '2024-11-15T09:10:00Z', durationMs: 12 * 60 * 1000, analyzed: false, tags: ['follow-up'] },
+];
+
+export const mockCallTranscriptEntries: CallTranscriptEntry[] = [
+  { id: 'cte-1', callId: 'call-20241117-001', speaker: 'customer', startMs: 0, endMs: 2500, text: '你好，我家卫生间有点漏水。' },
+  { id: 'cte-2', callId: 'call-20241117-001', speaker: 'rep', startMs: 2700, endMs: 8200, text: '了解，我们可以安排免费上门勘查，您看明天下午两点是否方便？' },
+  { id: 'cte-3', callId: 'call-20241117-001', speaker: 'customer', startMs: 8400, endMs: 12200, text: '可以，不过我比较关心费用是否很高。' },
+  { id: 'cte-4', callId: 'call-20241117-001', speaker: 'rep', startMs: 12500, endMs: 18500, text: '我们先勘查，根据实际情况提供详细方案与报价。' },
+];
+
+export const mockCallSignals: CallSignal[] = [
+  { id: 'cs-1', callId: 'call-20241117-001', repId: 'rep-1', type: 'objection', severity: 'medium', timestamp: '2024-11-17T10:33:00Z', snippet: '我比较关心费用是否很高。' },
+  { id: 'cs-2', callId: 'call-20241117-001', repId: 'rep-1', type: 'no_next_step', severity: 'low', timestamp: '2024-11-17T10:39:00Z', snippet: '先把方案发给我，我先看看再说。' },
+];
+
+export const mockBehaviorMetrics: BehaviorMetrics[] = [
+  { callId: 'call-20241117-001', talkRatio: 0.58, listenRatio: 0.42, silenceCount: 3, questionCount: 5, sentimentScore: 0.62 },
+  { callId: 'call-20241116-002', talkRatio: 0.65, listenRatio: 0.35, silenceCount: 2, questionCount: 4, sentimentScore: 0.55 },
+];
+
+export const getCallRecordsByRepId = (repId: string) =>
+  mockCallRecords.filter(c => c.repId === repId);
+
+export const getCallById = (callId: string) =>
+  mockCallRecords.find(c => c.id === callId);
+
+export const getCallTranscriptByCallId = (callId: string) =>
+  mockCallTranscriptEntries.filter(e => e.callId === callId);
+
+export const getBehaviorMetricsByCallId = (callId: string) =>
+  mockBehaviorMetrics.find(m => m.callId === callId);
+
+export const getSignalsByCallId = (callId: string) =>
+  mockCallSignals.filter(s => s.callId === callId);
+
+export const toggleCallStar = (callId: string, starred: boolean) => {
+  const idx = mockCallRecords.findIndex(c => c.id === callId);
+  if (idx >= 0) mockCallRecords[idx].starred = starred;
 };
