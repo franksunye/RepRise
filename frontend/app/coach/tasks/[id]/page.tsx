@@ -230,7 +230,7 @@ export default function TaskDetailPage() {
                       </Badge>
                       <span className="text-xs text-gray-500">{new Date(signal.timestamp).toLocaleString('zh-CN')}</span>
                     </div>
-                    <p className="text-sm text-gray-700 italic">"{signal.snippet}"</p>
+                    <p className="text-sm text-gray-700 italic">&quot;{signal.snippet}&quot;</p>
                   </div>
                   <Button size="sm" variant="ghost">
                     查看通话
