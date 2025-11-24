@@ -153,7 +153,7 @@ export default function TaskDetailPage() {
                 </Avatar>
                 <div>
                   <p className="font-medium text-gray-900">{rep?.name}</p>
-                  <p className="text-xs text-gray-600">{rep?.position}</p>
+                  <p className="text-xs text-gray-600">销售代表</p>
                 </div>
               </div>
             </div>
