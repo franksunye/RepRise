@@ -654,6 +654,23 @@ export const getUserPracticeTypeStats = (userId: string) =>
   mockPracticeTypeStats[userId] || [];
 
 
+
+
+// Coaching Signals
+export const mockCoachingSignals = [
+  { id: 'sig-1', repId: 'rep-1', type: 'objection', snippet: 'Your price is much higher than others...', timestamp: '2024-11-17T10:30:00Z' },
+  { id: 'sig-2', repId: 'rep-2', type: 'no_next_step', snippet: 'Okay, I will think about it and let you know.', timestamp: '2024-11-17T11:15:00Z' },
+  { id: 'sig-3', repId: 'rep-3', type: 'engagement', snippet: 'The customer seemed distracted and uninterested during the call.', timestamp: '2024-11-16T14:45:00Z' },
+  { id: 'sig-4', repId: 'rep-1', type: 'no_next_step', snippet: 'Just send me the proposal, I will check it later.', timestamp: '2024-11-16T16:00:00Z' },
+];
+
+// Coaching Feedback (summary used by coach dashboard)
+export const mockFeedback = [
+  { id: 'fb-1', repId: 'rep-1', coachId: 'coach-1', summary: 'Great job handling the price objection. Try to focus more on value next time.', timestamp: '2024-11-17T12:00:00Z' },
+  { id: 'fb-2', repId: 'rep-2', coachId: 'coach-2', summary: 'Good rapport building, but remember to always establish a clear next step.', timestamp: '2024-11-17T11:30:00Z' },
+  { id: 'fb-3', repId: 'rep-3', coachId: 'coach-1', summary: 'Need to work on asking more engaging questions to keep the customer interested.', timestamp: '2024-11-16T15:00:00Z' },
+];
+
 // =================================================================
 // START: Jules's additions for coach feedback feature
 // =================================================================
