@@ -219,6 +219,7 @@ export function CoachDashboard() {
       <footer className="pt-4 mt-8 text-sm text-center text-gray-500 border-t">
           <div className="flex items-center justify-center gap-6">
             <Link href="/coach/reps" className="hover:underline">所有代表 (All Reps)</Link>
+            <Link href="/coach/inbox" className="hover:underline">教练收件箱 (Coaching Inbox)</Link>
             <Link href="/practice/history" className="hover:underline">历史通话回顾</Link>
             <Link href="#" className="hover:underline">反馈历史</Link>
             <Link href="#" className="hover:underline">设定 (Settings)</Link>
