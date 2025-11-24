@@ -658,10 +658,10 @@ export const getUserPracticeTypeStats = (userId: string) =>
 
 // Coaching Signals
 export const mockCoachingSignals = [
-  { id: 'sig-1', repId: 'rep-1', type: 'objection', snippet: 'Your price is much higher than others...', timestamp: '2024-11-17T10:30:00Z' },
-  { id: 'sig-2', repId: 'rep-2', type: 'no_next_step', snippet: 'Okay, I will think about it and let you know.', timestamp: '2024-11-17T11:15:00Z' },
-  { id: 'sig-3', repId: 'rep-3', type: 'engagement', snippet: 'The customer seemed distracted and uninterested during the call.', timestamp: '2024-11-16T14:45:00Z' },
-  { id: 'sig-4', repId: 'rep-1', type: 'no_next_step', snippet: 'Just send me the proposal, I will check it later.', timestamp: '2024-11-16T16:00:00Z' },
+  { id: 'sig-1', repId: 'rep-1', type: 'objection', snippet: '你们的价格比其他公司高太多了...', timestamp: '2024-11-17T10:30:00Z' },
+  { id: 'sig-2', repId: 'rep-2', type: 'no_next_step', snippet: '好的，我再想想，到时候会联系你。', timestamp: '2024-11-17T11:15:00Z' },
+  { id: 'sig-3', repId: 'rep-3', type: 'engagement', snippet: '客户在通话中显得很分心，对我们的方案不太感兴趣。', timestamp: '2024-11-16T14:45:00Z' },
+  { id: 'sig-4', repId: 'rep-1', type: 'no_next_step', snippet: '先把方案发给我，我先看看再说。', timestamp: '2024-11-16T16:00:00Z' },
 ];
 
 // =================================================================

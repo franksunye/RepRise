@@ -37,9 +37,9 @@ export function CoachDashboard() {
       {/* Header */}
       <header className="flex items-center justify-between pb-4 border-b">
         <div className="flex items-center gap-4">
-          <Avatar className="h-12 w-12">
+          <Avatar className="w-12 h-12">
             <AvatarImage src={getRealisticAvatarUrl(currentCoach.name)} alt={currentCoach.name} />
-            <AvatarFallback className="text-lg bg-blue-100 text-blue-600 font-medium">
+            <AvatarFallback className="text-lg font-medium text-blue-600 bg-blue-100">
               {getInitials(currentCoach.name)}
             </AvatarFallback>
           </Avatar>
@@ -52,27 +52,27 @@ export function CoachDashboard() {
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
+            <Filter className="w-4 h-4 mr-2" />
             过滤 / 筛选
           </Button>
           <Button>
-            <PlusCircle className="h-4 w-4 mr-2" />
+            <PlusCircle className="w-4 h-4 mr-2" />
             新建任务
           </Button>
           <Button variant="secondary">
-            <ListChecks className="h-4 w-4 mr-2" />
+            <ListChecks className="w-4 h-4 mr-2" />
             查看所有任务
           </Button>
         </div>
       </header>
 
       {/* Main Panel */}
-      <main className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+      <main className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
           {/* Pending Coaching Tasks */}
           <Card>
             <CardHeader>
-              <CardTitle>待处理任务 (Pending Coaching Tasks)</CardTitle>
+              <CardTitle>待处理任务</CardTitle>
               <CardDescription>这里显示了需要您关注的未完成任务。</CardDescription>
             </CardHeader>
             <CardContent>
@@ -81,10 +81,10 @@ export function CoachDashboard() {
                   const rep = myReps.find(r => r.id === task.repId);
                   const isOverdue = new Date(task.dueDate) < new Date() && task.status !== 'completed';
                   return (
-                    <Link href="#" key={task.id} className="block p-3 -mx-3 rounded-lg border-transparent hover:border-gray-200 border hover:bg-gray-50 transition-all">
+                    <Link href="#" key={task.id} className="block p-3 -mx-3 transition-all border border-transparent rounded-lg hover:border-gray-200 hover:bg-gray-50">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                           <Avatar className="h-8 w-8">
+                           <Avatar className="w-8 h-8">
                             <AvatarImage src={getRealisticAvatarUrl(rep?.name || '')} />
                             <AvatarFallback className="text-xs">{getInitials(rep?.name || '')}</AvatarFallback>
                           </Avatar>
@@ -93,19 +93,19 @@ export function CoachDashboard() {
                             <p className="text-sm text-gray-500">{rep?.name}</p>
                           </div>
                         </div>
-                        <div className="text-right flex items-center gap-4">
+                        <div className="flex items-center gap-4 text-right">
                           <div className='flex flex-col items-end'>
                             <div className="flex items-center gap-2">
                               {task.priority === 'high' && <Badge variant="destructive">高</Badge>}
-                              {task.priority === 'medium' && <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-200">中</Badge>}
+                              {task.priority === 'medium' && <Badge variant="secondary" className="text-yellow-800 bg-yellow-100 border-yellow-200">中</Badge>}
                               {isOverdue && <Badge variant="destructive">已逾期</Badge>}
                             </div>
                           </div>
                           <div className="text-sm text-gray-500 flex items-center gap-1.5 w-28">
-                            <Clock className="h-4 w-4" />
+                            <Clock className="w-4 h-4" />
                             <span>截止: {new Date(task.dueDate).toLocaleDateString()}</span>
                           </div>
-                          <ArrowRight className="h-4 w-4 text-gray-400" />
+                          <ArrowRight className="w-4 h-4 text-gray-400" />
                         </div>
                       </div>
                     </Link>
@@ -118,7 +118,7 @@ export function CoachDashboard() {
           {/* New Coaching Signals */}
           <Card>
             <CardHeader>
-              <CardTitle>新的教练机会 (New Coaching Signals)</CardTitle>
+              <CardTitle>新的教练机会</CardTitle>
               <CardDescription>来自通话智能的信号，提示值得干预的通话。</CardDescription>
             </CardHeader>
             <CardContent>
@@ -126,18 +126,18 @@ export function CoachDashboard() {
                 {mockCoachingSignals.slice(0, 4).map(signal => {
                   const rep = myReps.find(r => r.id === signal.repId);
                   return (
-                    <div key={signal.id} className="p-3 border rounded-lg hover:bg-gray-50/80 transition-colors">
+                    <div key={signal.id} className="p-3 transition-colors border rounded-lg hover:bg-gray-50/80">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1.5">
-                            {signal.type === 'objection' && <Badge variant="secondary" className="bg-orange-100 text-orange-800">异议</Badge>}
-                            {signal.type === 'no_next_step' && <Badge variant="secondary" className="bg-purple-100 text-purple-800">无下一步</Badge>}
-                            {signal.type === 'engagement' && <Badge variant="secondary" className="bg-blue-100 text-blue-800">低参与度</Badge>}
+                            {signal.type === 'objection' && <Badge variant="secondary" className="text-orange-800 bg-orange-100">异议</Badge>}
+                            {signal.type === 'no_next_step' && <Badge variant="secondary" className="text-purple-800 bg-purple-100">无下一步</Badge>}
+                            {signal.type === 'engagement' && <Badge variant="secondary" className="text-blue-800 bg-blue-100">低参与度</Badge>}
                             <p className="text-sm text-gray-500">{new Date(signal.timestamp).toLocaleString()}</p>
                           </div>
-                          <p className="text-gray-700 leading-relaxed">&quot;{signal.snippet}&quot;</p>
+                          <p className="leading-relaxed text-gray-700">&quot;{signal.snippet}&quot;</p>
                           <div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
-                             <Avatar className="h-6 w-6">
+                             <Avatar className="w-6 h-6">
                               <AvatarImage src={getRealisticAvatarUrl(rep?.name || '')} />
                               <AvatarFallback className="text-xs">{getInitials(rep?.name || '')}</AvatarFallback>
                             </Avatar>
@@ -156,15 +156,15 @@ export function CoachDashboard() {
             </CardContent>
           </Card>
         </div>
-        <div className="lg:col-span-1 space-y-6">
+        <div className="space-y-6 lg:col-span-1">
           {/* Coach Performance */}
           <Card>
             <CardHeader>
-              <CardTitle>任务完成情况 (Coach Performance)</CardTitle>
+              <CardTitle>任务完成情况</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <h4 className="text-sm font-medium text-gray-600 mb-2">任务统计</h4>
+                <h4 className="mb-2 text-sm font-medium text-gray-600">任务统计</h4>
                 <div style={{ height: '150px' }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
@@ -184,7 +184,7 @@ export function CoachDashboard() {
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-gray-600 mb-2">行动项完成率</h4>
+                <h4 className="mb-2 text-sm font-medium text-gray-600">行动项完成率</h4>
                 <div className="flex items-center gap-3">
                   <Progress value={82} className="h-2" />
                   <span className="font-semibold text-gray-700">82%</span>
@@ -203,7 +203,7 @@ export function CoachDashboard() {
                 {getAllFeedbacks().slice(0, 3).map(fb => {
                   const rep = myReps.find(r => r.id === fb.repId);
                   return (
-                    <Link href={`/coach/feedback/${fb.id}`} key={fb.id} className="text-sm p-3 rounded-lg bg-gray-50 border hover:bg-gray-100 hover:border-gray-300 transition-colors block">
+                    <Link href={`/coach/feedback/${fb.id}`} key={fb.id} className="block p-3 text-sm transition-colors border rounded-lg bg-gray-50 hover:bg-gray-100 hover:border-gray-300">
                       <p className="text-gray-800 break-words line-clamp-2">&quot;{fb.content.substring(0, 80)}{fb.content.length > 80 ? '...' : ''}&quot;</p>
                       <p className="text-xs text-gray-500 text-right mt-1.5">- {rep?.name}</p>
                     </Link>
@@ -216,8 +216,8 @@ export function CoachDashboard() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-8 pt-4 border-t text-center text-sm text-gray-500">
-          <div className="flex justify-center items-center gap-6">
+      <footer className="pt-4 mt-8 text-sm text-center text-gray-500 border-t">
+          <div className="flex items-center justify-center gap-6">
             <Link href="/coach/reps" className="hover:underline">所有代表 (All Reps)</Link>
             <Link href="/practice/history" className="hover:underline">历史通话回顾</Link>
             <Link href="#" className="hover:underline">反馈历史</Link>
