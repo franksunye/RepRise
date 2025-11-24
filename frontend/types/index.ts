@@ -159,3 +159,32 @@ export interface PracticeTypeStats {
   count: number;
   averageScore: number;
 }
+
+// 反馈来源类型
+export type FeedbackSource = 'Role-play' | 'Live Call';
+
+// 行动建议状态
+export type ActionItemStatus = 'pending' | 'in_progress' | 'done';
+
+// 教练反馈
+export interface Feedback {
+  id: string;
+  source: FeedbackSource;
+  sourceId: string; // 关联的 Role-play ID 或 Live Call ID
+  repId: string;
+  coachId: string;
+  timestamp: string;
+  tags: string[];
+  content: string;
+  score?: number; // 评分 (例如 1-5)
+  version?: string; // 版本号
+}
+
+// 行动建议
+export interface ActionItem {
+  id: string;
+  feedbackId: string; // 关联的 Feedback ID
+  description: string;
+  status: ActionItemStatus;
+  dueDate: string;
+}

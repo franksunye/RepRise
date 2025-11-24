@@ -1,4 +1,4 @@
-import { Rep, Coach, Practice, CoachingTask, PlaybookItem, KPIData, Notification, LearningPath, Course, UserCourseProgress, SkillScore, TrendDataPoint, PracticeTypeStats } from '@/types';
+import { Rep, Coach, Practice, CoachingTask, PlaybookItem, KPIData, Notification, LearningPath, Course, UserCourseProgress, SkillScore, TrendDataPoint, PracticeTypeStats, Feedback, ActionItem } from '@/types';
 
 // 管家数据 (15名)
 export const mockReps: Rep[] = [
@@ -653,6 +653,9 @@ export const getUserScoreTrend = (userId: string) =>
 export const getUserPracticeTypeStats = (userId: string) =>
   mockPracticeTypeStats[userId] || [];
 
+
+
+
 // Coaching Signals
 export const mockCoachingSignals = [
   { id: 'sig-1', repId: 'rep-1', type: 'objection', snippet: 'Your price is much higher than others...', timestamp: '2024-11-17T10:30:00Z' },
@@ -661,9 +664,98 @@ export const mockCoachingSignals = [
   { id: 'sig-4', repId: 'rep-1', type: 'no_next_step', snippet: 'Just send me the proposal, I will check it later.', timestamp: '2024-11-16T16:00:00Z' },
 ];
 
-// Coaching Feedback
+// Coaching Feedback (summary used by coach dashboard)
 export const mockFeedback = [
   { id: 'fb-1', repId: 'rep-1', coachId: 'coach-1', summary: 'Great job handling the price objection. Try to focus more on value next time.', timestamp: '2024-11-17T12:00:00Z' },
   { id: 'fb-2', repId: 'rep-2', coachId: 'coach-2', summary: 'Good rapport building, but remember to always establish a clear next step.', timestamp: '2024-11-17T11:30:00Z' },
   { id: 'fb-3', repId: 'rep-3', coachId: 'coach-1', summary: 'Need to work on asking more engaging questions to keep the customer interested.', timestamp: '2024-11-16T15:00:00Z' },
 ];
+
+// =================================================================
+// START: Jules's additions for coach feedback feature
+// =================================================================
+
+// 教练反馈数据
+export const mockFeedbacks: Feedback[] = [
+  {
+    id: 'feedback-1',
+    source: 'Role-play',
+    sourceId: 'practice-1',
+    repId: 'rep-1',
+    coachId: 'coach-1',
+    timestamp: '2024-11-15T11:00:00',
+    tags: ['异议处理', '提问技巧'],
+    content: '在处理客户关于价格的异议时，你的回答非常专业，能够清晰地解释价值所在。在提问方面，可以尝试使用更多开放式问题来引导客户说出更深层次的需求。',
+    score: 4,
+    version: '1.0',
+  },
+  {
+    id: 'feedback-2',
+    source: 'Live Call',
+    sourceId: 'live-call-xyz',
+    repId: 'rep-2',
+    coachId: 'coach-2',
+    timestamp: '2024-11-16T15:30:00',
+    tags: ['勘查技巧', '沟通能力'],
+    content: '现场勘查流程很规范，能够主动发现问题。但在与客户沟通维修方案时，可以更自信一些，用更肯定的语气给出建议。',
+    score: 5,
+  },
+  {
+    id: 'feedback-3',
+    source: 'Role-play',
+    sourceId: 'practice-3',
+    repId: 'rep-1',
+    coachId: 'coach-1',
+    timestamp: '2024-11-17T09:45:00',
+    tags: ['关闭能力', '报价谈判'],
+    content: '这次的报价谈判练习非常成功！你成功地营造了紧迫感，并最终引导客户做出了决定。下次可以尝试在报价前做更多的价值铺垫。',
+    version: '2.1',
+  },
+];
+
+// 行动建议数据
+export const mockActionItems: ActionItem[] = [
+  {
+    id: 'action-item-1',
+    feedbackId: 'feedback-1',
+    description: '学习并练习三种不同的开放式提问技巧。',
+    status: 'pending',
+    dueDate: '2024-11-22',
+  },
+  {
+    id: 'action-item-2',
+    feedbackId: 'feedback-1',
+    description: '完成一次关于“价值销售”的微课程学习。',
+    status: 'in_progress',
+    dueDate: '2024-11-25',
+  },
+  {
+    id: 'action-item-3',
+    feedbackId: 'feedback-2',
+    description: '观看《如何自信地沟通》视频，并提交学习心得。',
+    status: 'done',
+    dueDate: '2024-11-20',
+  },
+    {
+    id: 'action-item-4',
+    feedbackId: 'feedback-3',
+    description: '整理一套自己的价值铺垫话术，并与教练进行一次1对1演练。',
+    status: 'pending',
+    dueDate: '2024-11-24',
+  },
+];
+
+// 获取所有反馈
+export const getAllFeedbacks = () => mockFeedbacks;
+
+// 根据ID获取反馈
+export const getFeedbackById = (feedbackId: string) =>
+  mockFeedbacks.find(f => f.id === feedbackId);
+
+// 根据反馈ID获取行动建议
+export const getActionItemsByFeedbackId = (feedbackId: string) =>
+  mockActionItems.filter(a => a.feedbackId === feedbackId);
+
+// =================================================================
+// END: Jules's additions for coach feedback feature
+// =================================================================
