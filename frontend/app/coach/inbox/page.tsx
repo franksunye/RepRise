@@ -492,7 +492,7 @@ export default function CoachingInbox() {
                                 </Avatar>
                                 <span>{rep?.name}</span>
                                 {signal.callId && (
-                                  <Link href={`/coach/conversations?repId=${signal.repId}&callId=${signal.callId}`} className="text-blue-600">
+                                  <Link href={`/coach/conversations/${signal.callId}`} className="text-blue-600">
                                     <Button variant="link" size="sm" className="h-6 p-0 text-blue-600">
                                       <Phone className="w-3 h-3 mr-1" />
                                       查看通话
