@@ -51,7 +51,7 @@ export default function TasksPage() {
           {tasks.map((task) => {
             const isOverdue = new Date(task.dueDate) < new Date() && task.status !== 'completed';
             return (
-              <Link key={task.id} href={`/tasks/${task.id}`}>
+              <Link key={task.id} href={`/tasks/${task.id}`} className="block">
                 <div className={`border rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer ${
                   isOverdue ? 'border-red-300 bg-red-50/50' : ''
                 }`}>
