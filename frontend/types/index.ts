@@ -266,7 +266,22 @@ export interface CallTranscriptEntry {
   text: string;
 }
 
-export type CallSignalType = 'objection' | 'no_next_step' | 'competitor' | 'buying' | 'engagement';
+export type CallSignalType =
+  | 'objection'
+  | 'no_next_step'
+  | 'competitor'
+  | 'buying'
+  | 'engagement'
+  | 'behavior_active_selling'
+  | 'behavior_listening'
+  | 'behavior_opening_completeness'
+  | 'behavior_clarity'
+  | 'behavior_next_step'
+  | 'event_pricing'
+  | 'event_schedule'
+  | 'event_rejection';
+
+export type SignalCategory = 'behavior' | 'event';
 
 export interface CallSignal {
   id: string;
@@ -276,6 +291,7 @@ export interface CallSignal {
   severity: 'low' | 'medium' | 'high';
   timestamp: string;
   snippet: string;
+  category?: SignalCategory;
 }
 
 export interface BehaviorMetrics {

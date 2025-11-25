@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Phone, MessageSquare, Target, PlusCircle, Calendar, Clock, Play, Pause, Flag, Edit3 } from 'lucide-react';
 import { getCallById, getCallTranscriptByCallId, getSignalsByCallId } from '@/data/mock-data';
 import type { CallTranscriptEntry } from '@/types';
- 
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useMemo, useState } from 'react';
 
 export default function CoachConversationDetailPage() {
@@ -48,6 +48,14 @@ export default function CoachConversationDetailPage() {
       case 'engagement': return '低参与度';
       case 'buying': return '购买意向';
       case 'competitor': return '竞品提及';
+      case 'behavior_active_selling': return '主动销售行为';
+      case 'behavior_listening': return '倾听';
+      case 'behavior_opening_completeness': return '开场白完整度';
+      case 'behavior_clarity': return '解释清楚度';
+      case 'behavior_next_step': return '是否推动下一步';
+      case 'event_pricing': return '探价';
+      case 'event_schedule': return '拟定时间';
+      case 'event_rejection': return '拒绝';
       default: return t;
     }
   };
@@ -140,32 +148,100 @@ export default function CoachConversationDetailPage() {
           <CardDescription>对话中识别到的风险与商机</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            {signals.map((s) => {
-              const anchor = findEntryBySnippet(s.snippet);
-              return (
-                <div key={s.id} className="p-3 border rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
-                      <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
+          <Tabs defaultValue="all">
+            <TabsList>
+              <TabsTrigger value="all">全部</TabsTrigger>
+              <TabsTrigger value="behavior">行为表现</TabsTrigger>
+              <TabsTrigger value="event">对话事件</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="all">
+              <div className="space-y-2 mt-3">
+                {signals.map((s) => {
+                  const anchor = findEntryBySnippet(s.snippet);
+                  return (
+                    <div key={s.id} className="p-3 border rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
+                          <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
+                          {anchor && (
+                            <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" variant="outline">创建行动项</Button>
+                          <Button size="sm" variant="ghost">添加笔记</Button>
+                        </div>
+                      </div>
+                      <p className="text-sm mt-2">{s.snippet}</p>
                       {anchor && (
-                        <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
+                        <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" variant="outline">创建行动项</Button>
-                      <Button size="sm" variant="ghost">添加笔记</Button>
+                  );
+                })}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="behavior">
+              <div className="space-y-2 mt-3">
+                {signals.filter(s => (s as any).category === 'behavior' || s.type === 'engagement' || s.type.startsWith('behavior_')).map((s) => {
+                  const anchor = findEntryBySnippet(s.snippet);
+                  return (
+                    <div key={s.id} className="p-3 border rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
+                          <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
+                          {anchor && (
+                            <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" variant="outline">创建行动项</Button>
+                          <Button size="sm" variant="ghost">添加笔记</Button>
+                        </div>
+                      </div>
+                      <p className="text-sm mt-2">{s.snippet}</p>
+                      {anchor && (
+                        <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
+                      )}
                     </div>
-                  </div>
-                  <p className="text-sm mt-2">{s.snippet}</p>
-                  {anchor && (
-                    <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                  );
+                })}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="event">
+              <div className="space-y-2 mt-3">
+                {signals.filter(s => (s as any).category === 'event' || ['objection','no_next_step','buying','competitor'].includes(s.type) || s.type.startsWith('event_')).map((s) => {
+                  const anchor = findEntryBySnippet(s.snippet);
+                  return (
+                    <div key={s.id} className="p-3 border rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
+                          <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
+                          {anchor && (
+                            <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" variant="outline">创建行动项</Button>
+                          <Button size="sm" variant="ghost">添加笔记</Button>
+                        </div>
+                      </div>
+                      <p className="text-sm mt-2">{s.snippet}</p>
+                      {anchor && (
+                        <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
