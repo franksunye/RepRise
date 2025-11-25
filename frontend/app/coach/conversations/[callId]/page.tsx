@@ -174,7 +174,7 @@ export default function CoachConversationDetailPage() {
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5 text-blue-600" /> 信号
           </CardTitle>
-          <CardDescription>对话中识别到的风险与商机</CardDescription>
+          <CardDescription>对话中识别到的风险与商机，具体包括三个类别，分别是销售行为类（Rep Behaviors）、对话事件类（Event）、服务问题类（Issue）。其中销售行为会包括通话结构 /流程识别类和行为细节，对话事件类关注的是客户的意向（Intent Signals）。</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="all">
