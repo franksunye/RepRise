@@ -209,27 +209,7 @@ export default function CoachConversationDetailPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-blue-600" /> 信号
-          </CardTitle>
-          <CardDescription>对话中识别到的风险与商机</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {signals.map((s) => (
-              <div key={s.id} className="p-3 border rounded-lg">
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <Badge variant="outline">{typeLabel(s.type)}</Badge>
-                  <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
-                </div>
-                <p className="text-sm mt-2">{s.snippet}</p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      
 
       <Card>
         <CardHeader>
