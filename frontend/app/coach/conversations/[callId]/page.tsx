@@ -38,6 +38,14 @@ export default function CoachConversationDetailPage() {
       case 'no_next_step': return 'warning';
       case 'competitor': return 'destructive';
       case 'engagement': return 'default';
+      case 'behavior_active_selling': return 'success';
+      case 'behavior_listening': return 'success';
+      case 'behavior_opening_completeness': return 'success';
+      case 'behavior_clarity': return 'warning';
+      case 'behavior_next_step': return 'warning';
+      case 'event_pricing': return 'warning';
+      case 'event_schedule': return 'default';
+      case 'event_rejection': return 'destructive';
       default: return 'outline';
     }
   };

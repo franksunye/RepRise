@@ -34,7 +34,15 @@ export default function CoachAlertsPage() {
       case 'no_next_step': return '无下一步';
       case 'competitor': return '竞争者提及';
       case 'buying': return '买家信号';
-      case 'engagement': return '参与度';
+      case 'engagement': return '低参与度';
+      case 'behavior_active_selling': return '主动销售行为';
+      case 'behavior_listening': return '倾听';
+      case 'behavior_opening_completeness': return '开场白完整度';
+      case 'behavior_clarity': return '解释清楚度';
+      case 'behavior_next_step': return '是否推动下一步';
+      case 'event_pricing': return '探价';
+      case 'event_schedule': return '拟定时间';
+      case 'event_rejection': return '拒绝';
       default: return t;
     }
   };
@@ -89,7 +97,15 @@ export default function CoachAlertsPage() {
                 <SelectItem value="no_next_step">无下一步</SelectItem>
                 <SelectItem value="competitor">竞争者提及</SelectItem>
                 <SelectItem value="buying">买家信号</SelectItem>
-                <SelectItem value="engagement">参与度</SelectItem>
+                <SelectItem value="engagement">低参与度</SelectItem>
+                <SelectItem value="behavior_active_selling">主动销售行为</SelectItem>
+                <SelectItem value="behavior_listening">倾听</SelectItem>
+                <SelectItem value="behavior_opening_completeness">开场白完整度</SelectItem>
+                <SelectItem value="behavior_clarity">解释清楚度</SelectItem>
+                <SelectItem value="behavior_next_step">是否推动下一步</SelectItem>
+                <SelectItem value="event_pricing">探价</SelectItem>
+                <SelectItem value="event_schedule">拟定时间</SelectItem>
+                <SelectItem value="event_rejection">拒绝</SelectItem>
               </SelectContent>
             </Select>
             <Select value={severity} onValueChange={setSeverity}>
