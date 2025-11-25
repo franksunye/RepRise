@@ -141,11 +141,10 @@ export default function CoachConversationDetailPage() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="summary">
-            <TabsList>
-              <TabsTrigger value="summary">摘要 & 高亮</TabsTrigger>
-              <TabsTrigger value="transcript">转录与播放器</TabsTrigger>
-              <TabsTrigger value="signals">信号</TabsTrigger>
-            </TabsList>
+          <TabsList>
+            <TabsTrigger value="summary">摘要 & 高亮</TabsTrigger>
+            <TabsTrigger value="transcript">转录与播放器</TabsTrigger>
+          </TabsList>
 
             <TabsContent value="summary">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-3">
@@ -206,20 +205,29 @@ export default function CoachConversationDetailPage() {
               </div>
             </TabsContent>
 
-            <TabsContent value="signals">
-              <div className="space-y-2 mt-3">
-                {signals.map((s) => (
-                  <div key={s.id} className="p-3 border rounded-lg">
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <Badge variant="outline">{typeLabel(s.type)}</Badge>
-                      <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
-                    </div>
-                    <p className="text-sm mt-2">{s.snippet}</p>
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
           </Tabs>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5 text-blue-600" /> 信号
+          </CardTitle>
+          <CardDescription>对话中识别到的风险与商机</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {signals.map((s) => (
+              <div key={s.id} className="p-3 border rounded-lg">
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <Badge variant="outline">{typeLabel(s.type)}</Badge>
+                  <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
+                </div>
+                <p className="text-sm mt-2">{s.snippet}</p>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
