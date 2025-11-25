@@ -283,9 +283,15 @@ export type CallSignalType =
   | 'event_schedule'
   | 'event_rejection'
   | 'event_delay'
-  | 'event_urgency';
+  | 'event_urgency'
+  | 'issue_rep_delay'
+  | 'issue_schedule_conflict'
+  | 'issue_customer_wait_long';
 
 export type SignalCategory = 'behavior' | 'event';
+// 服务问题类
+// 扩展分类以支持服务问题类
+export type ExtendedSignalCategory = SignalCategory | 'issue';
 
 export interface CallSignal {
   id: string;
@@ -295,7 +301,7 @@ export interface CallSignal {
   severity: 'low' | 'medium' | 'high';
   timestamp: string;
   snippet: string;
-  category?: SignalCategory;
+  category?: ExtendedSignalCategory;
 }
 
 export interface BehaviorMetrics {

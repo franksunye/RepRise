@@ -47,6 +47,9 @@ export default function CoachAlertsPage() {
       case 'event_rejection': return '拒绝';
       case 'event_delay': return '拖延';
       case 'event_urgency': return '紧急';
+      case 'issue_rep_delay': return '管家原因上门延迟';
+      case 'issue_schedule_conflict': return '预约冲突';
+      case 'issue_customer_wait_long': return '客户等待过久';
       default: return t;
     }
   };
@@ -114,6 +117,9 @@ export default function CoachAlertsPage() {
                 <SelectItem value="event_rejection">拒绝</SelectItem>
                 <SelectItem value="event_delay">拖延</SelectItem>
                 <SelectItem value="event_urgency">紧急</SelectItem>
+                <SelectItem value="issue_rep_delay">管家原因上门延迟</SelectItem>
+                <SelectItem value="issue_schedule_conflict">预约冲突</SelectItem>
+                <SelectItem value="issue_customer_wait_long">客户等待过久</SelectItem>
               </SelectContent>
             </Select>
             <Select value={severity} onValueChange={setSeverity}>

@@ -1139,18 +1139,24 @@ export const mockCallSignals: CallSignal[] = [
   { id: 'cs-10', callId: 'call-20241117-001', repId: 'rep-1', type: 'behavior_next_step', severity: 'low', timestamp: '2024-11-17T10:40:00Z', snippet: '未明确下一步的跟进与确认。', category: 'behavior' },
   { id: 'cs-10b', callId: 'call-20241117-001', repId: 'rep-1', type: 'behavior_structure', severity: 'medium', timestamp: '2024-11-17T10:28:00Z', snippet: '交流结构清晰，有开场、需求、方案、下一步。', category: 'behavior' },
   { id: 'cs-10c', callId: 'call-20241117-001', repId: 'rep-1', type: 'behavior_emotion_tone_pace', severity: 'medium', timestamp: '2024-11-17T10:29:00Z', snippet: '态度友好、语速适中、情绪稳定。', category: 'behavior' },
+  // Issue Signals
+  { id: 'cs-10d', callId: 'call-20241117-001', repId: 'rep-1', type: 'issue_rep_delay', severity: 'medium', timestamp: '2024-11-17T10:41:00Z', snippet: '因管家安排导致上门延迟。', category: 'issue' },
+  { id: 'cs-10e', callId: 'call-20241117-001', repId: 'rep-1', type: 'issue_schedule_conflict', severity: 'medium', timestamp: '2024-11-17T10:42:00Z', snippet: '预约时间冲突需要调整。', category: 'issue' },
+  { id: 'cs-10f', callId: 'call-20241117-001', repId: 'rep-1', type: 'issue_customer_wait_long', severity: 'high', timestamp: '2024-11-17T10:43:00Z', snippet: '客户等待过久，表达不满。', category: 'issue' },
 
   // call-20241116-002（简化示例）
   { id: 'cs-11', callId: 'call-20241116-002', repId: 'rep-1', type: 'event_objection', severity: 'medium', timestamp: '2024-11-16T15:50:00Z', snippet: '总价有点高，能不能便宜一点？', category: 'event' },
   { id: 'cs-12', callId: 'call-20241116-002', repId: 'rep-1', type: 'event_pricing', severity: 'high', timestamp: '2024-11-16T15:45:00Z', snippet: '这个方案要多少钱？', category: 'event' },
   { id: 'cs-13', callId: 'call-20241116-002', repId: 'rep-1', type: 'behavior_listening', severity: 'medium', timestamp: '2024-11-16T15:42:00Z', snippet: '倾听客户预算限制。', category: 'behavior' },
   { id: 'cs-13b', callId: 'call-20241116-002', repId: 'rep-1', type: 'event_delay', severity: 'medium', timestamp: '2024-11-16T15:52:00Z', snippet: '我再考虑一下。', category: 'event' },
+  { id: 'cs-13c', callId: 'call-20241116-002', repId: 'rep-1', type: 'issue_schedule_conflict', severity: 'low', timestamp: '2024-11-16T15:53:00Z', snippet: '预约出现时间冲突。', category: 'issue' },
 
   // call-20241115-003（简化示例）
   { id: 'cs-14', callId: 'call-20241115-003', repId: 'rep-1', type: 'event_no_next_step', severity: 'low', timestamp: '2024-11-15T09:12:00Z', snippet: '发个方案我再看', category: 'event' },
   { id: 'cs-15', callId: 'call-20241115-003', repId: 'rep-1', type: 'event_schedule', severity: 'medium', timestamp: '2024-11-15T09:11:00Z', snippet: '下周三方便吗？', category: 'event' },
   { id: 'cs-16', callId: 'call-20241115-003', repId: 'rep-1', type: 'behavior_active_selling', severity: 'medium', timestamp: '2024-11-15T09:10:30Z', snippet: '介绍勘查流程与报价步骤。', category: 'behavior' },
   { id: 'cs-16b', callId: 'call-20241115-003', repId: 'rep-1', type: 'event_urgency', severity: 'high', timestamp: '2024-11-15T09:09:30Z', snippet: '尽快上门。', category: 'event' },
+  { id: 'cs-16c', callId: 'call-20241115-003', repId: 'rep-1', type: 'issue_customer_wait_long', severity: 'medium', timestamp: '2024-11-15T09:08:30Z', snippet: '客户等待较久，表示不满。', category: 'issue' },
 ];
 
 export const mockBehaviorMetrics: BehaviorMetrics[] = [

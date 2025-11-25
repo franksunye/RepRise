@@ -50,6 +50,9 @@ export default function CoachConversationDetailPage() {
       case 'event_rejection': return 'destructive';
       case 'event_delay': return 'warning';
       case 'event_urgency': return 'destructive';
+      case 'issue_rep_delay': return 'warning';
+      case 'issue_schedule_conflict': return 'warning';
+      case 'issue_customer_wait_long': return 'destructive';
       default: return 'outline';
     }
   };
@@ -72,6 +75,9 @@ export default function CoachConversationDetailPage() {
       case 'event_rejection': return '拒绝';
       case 'event_delay': return '拖延';
       case 'event_urgency': return '紧急';
+      case 'issue_rep_delay': return '管家原因上门延迟';
+      case 'issue_schedule_conflict': return '预约冲突';
+      case 'issue_customer_wait_long': return '客户等待过久';
       default: return t;
     }
   };
@@ -84,8 +90,10 @@ export default function CoachConversationDetailPage() {
     }
   };
 
-  const categoryOf = (t: string): 'behavior' | 'event' => {
+  const categoryOf = (t: string): 'behavior' | 'event' | 'issue' => {
     if (t.startsWith('behavior_')) return 'behavior';
+    if (t.startsWith('event_')) return 'event';
+    if (t.startsWith('issue_')) return 'issue';
     return 'event';
   };
 
@@ -174,6 +182,7 @@ export default function CoachConversationDetailPage() {
               <TabsTrigger value="all">全部</TabsTrigger>
               <TabsTrigger value="behavior">行为表现</TabsTrigger>
               <TabsTrigger value="event">对话事件</TabsTrigger>
+              <TabsTrigger value="issue">服务问题</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all">
@@ -237,6 +246,35 @@ export default function CoachConversationDetailPage() {
             <TabsContent value="event">
               <div className="space-y-2 mt-3">
                 {signals.filter(s => categoryOf(s.type) === 'event').map((s) => {
+                  const anchor = findEntryBySnippet(s.snippet);
+                  return (
+                    <div key={s.id} className="p-3 border rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
+                          <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
+                          {anchor && (
+                            <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" variant="outline">创建行动项</Button>
+                          <Button size="sm" variant="ghost">添加笔记</Button>
+                        </div>
+                      </div>
+                      <p className="text-sm mt-2">{s.snippet}</p>
+                      {anchor && (
+                        <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="issue">
+              <div className="space-y-2 mt-3">
+                {signals.filter(s => categoryOf(s.type) === 'issue').map((s) => {
                   const anchor = findEntryBySnippet(s.snippet);
                   return (
                     <div key={s.id} className="p-3 border rounded-lg">
