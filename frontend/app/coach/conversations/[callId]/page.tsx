@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Phone, MessageSquare, Target, PlusCircle, Calendar, Clock, Play, Pause, Flag, Edit3 } from 'lucide-react';
 import { getCallById, getCallTranscriptByCallId, getSignalsByCallId } from '@/data/mock-data';
 import type { CallTranscriptEntry } from '@/types';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+ 
 import { useMemo, useState } from 'react';
 
 export default function CoachConversationDetailPage() {
@@ -134,7 +134,7 @@ export default function CoachConversationDetailPage() {
 
       <Card id="signals-section">
         <CardHeader>
-          <CardTitle className="flex items中心 gap-2">
+          <CardTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5 text-blue-600" /> 信号
           </CardTitle>
           <CardDescription>对话中识别到的风险与商机</CardDescription>
@@ -172,34 +172,35 @@ export default function CoachConversationDetailPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-blue-600" /> 摘要、高亮与转录
+            <MessageSquare className="h-5 w-5 text-blue-600" /> 摘要与高亮
           </CardTitle>
-          <CardDescription>从摘要与高亮快速导航到逐句转录；播放录音并按句浏览转录，支持片段标记</CardDescription>
+          <CardDescription>通话摘要与高亮片段</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="summary">
-          <TabsList>
-            <TabsTrigger value="summary">摘要 & 高亮</TabsTrigger>
-            <TabsTrigger value="transcript">转录与播放器</TabsTrigger>
-          </TabsList>
-
-            <TabsContent value="summary">
-              <div className="mt-3">
-                <div className="p-3 border rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-700">通话摘要</p>
-                    <Button variant="ghost" size="sm"><Edit3 className="h-4 w-4 mr-2" /> 编辑摘要</Button>
-                  </div>
-                  <p className="text-sm text-gray-800 mt-2">{summary}</p>
-                </div>
+          <div className="mt-1">
+            <div className="p-3 border rounded-lg">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-gray-700">通话摘要</p>
+                <Button variant="ghost" size="sm"><Edit3 className="h-4 w-4 mr-2" /> 编辑摘要</Button>
               </div>
-            </TabsContent>
+              <p className="text-sm text-gray-800 mt-2">{summary}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-            <TabsContent value="transcript">
-              <div className="flex items-center gap-2 mb-3 mt-3">
-                <Button variant="outline" size="sm"><Play className="h-4 w-4 mr-2" /> 播放</Button>
-                <Button variant="ghost" size="sm"><Pause className="h-4 w-4 mr-2" /> 暂停</Button>
-              </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5 text-blue-600" /> 转录与播放器
+          </CardTitle>
+          <CardDescription>播放录音并按句浏览转录，支持片段标记</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2 mb-3 mt-1">
+            <Button variant="outline" size="sm"><Play className="h-4 w-4 mr-2" /> 播放</Button>
+            <Button variant="ghost" size="sm"><Pause className="h-4 w-4 mr-2" /> 暂停</Button>
+          </div>
               <div className="space-y-2">
                 {transcript.map((e: CallTranscriptEntry) => (
                   <div id={`entry-${e.id}`} key={e.id} className="p-3 border rounded-lg">
@@ -214,9 +215,6 @@ export default function CoachConversationDetailPage() {
                   </div>
                 ))}
               </div>
-            </TabsContent>
-
-          </Tabs>
         </CardContent>
       </Card>
 
