@@ -33,8 +33,10 @@ export default function CoachAlertsPage() {
       case 'objection': return '异议';
       case 'no_next_step': return '无下一步';
       case 'competitor': return '竞争者提及';
-      case 'buying': return '买家信号';
+      case 'buying': return '高需求（购买意向）';
       case 'engagement': return '低参与度';
+      case 'behavior_structure': return '是否结构化';
+      case 'behavior_emotion_tone_pace': return '情绪/态度/语速';
       case 'behavior_active_selling': return '主动销售行为';
       case 'behavior_listening': return '倾听';
       case 'behavior_opening_completeness': return '开场白完整度';
@@ -43,6 +45,8 @@ export default function CoachAlertsPage() {
       case 'event_pricing': return '探价';
       case 'event_schedule': return '拟定时间';
       case 'event_rejection': return '拒绝';
+      case 'event_delay': return '拖延';
+      case 'event_urgency': return '紧急';
       default: return t;
     }
   };
@@ -97,6 +101,8 @@ export default function CoachAlertsPage() {
                 <SelectItem value="no_next_step">无下一步</SelectItem>
                 <SelectItem value="competitor">竞争者提及</SelectItem>
                 <SelectItem value="buying">买家信号</SelectItem>
+                <SelectItem value="behavior_structure">是否结构化</SelectItem>
+                <SelectItem value="behavior_emotion_tone_pace">情绪/态度/语速</SelectItem>
                 <SelectItem value="engagement">低参与度</SelectItem>
                 <SelectItem value="behavior_active_selling">主动销售行为</SelectItem>
                 <SelectItem value="behavior_listening">倾听</SelectItem>
@@ -106,6 +112,8 @@ export default function CoachAlertsPage() {
                 <SelectItem value="event_pricing">探价</SelectItem>
                 <SelectItem value="event_schedule">拟定时间</SelectItem>
                 <SelectItem value="event_rejection">拒绝</SelectItem>
+                <SelectItem value="event_delay">拖延</SelectItem>
+                <SelectItem value="event_urgency">紧急</SelectItem>
               </SelectContent>
             </Select>
             <Select value={severity} onValueChange={setSeverity}>

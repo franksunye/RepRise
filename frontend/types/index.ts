@@ -272,6 +272,8 @@ export type CallSignalType =
   | 'competitor'
   | 'buying'
   | 'engagement'
+  | 'behavior_structure'
+  | 'behavior_emotion_tone_pace'
   | 'behavior_active_selling'
   | 'behavior_listening'
   | 'behavior_opening_completeness'
@@ -279,7 +281,9 @@ export type CallSignalType =
   | 'behavior_next_step'
   | 'event_pricing'
   | 'event_schedule'
-  | 'event_rejection';
+  | 'event_rejection'
+  | 'event_delay'
+  | 'event_urgency';
 
 export type SignalCategory = 'behavior' | 'event';
 

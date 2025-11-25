@@ -38,6 +38,8 @@ export default function CoachConversationDetailPage() {
       case 'no_next_step': return 'warning';
       case 'competitor': return 'destructive';
       case 'engagement': return 'default';
+      case 'behavior_structure': return 'success';
+      case 'behavior_emotion_tone_pace': return 'default';
       case 'behavior_active_selling': return 'success';
       case 'behavior_listening': return 'success';
       case 'behavior_opening_completeness': return 'success';
@@ -46,16 +48,20 @@ export default function CoachConversationDetailPage() {
       case 'event_pricing': return 'warning';
       case 'event_schedule': return 'default';
       case 'event_rejection': return 'destructive';
+      case 'event_delay': return 'warning';
+      case 'event_urgency': return 'destructive';
       default: return 'outline';
     }
   };
   const typeLabel = (t: string) => {
     switch (t) {
-      case 'objection': return '异议';
-      case 'no_next_step': return '无下一步';
-      case 'engagement': return '低参与度';
-      case 'buying': return '购买意向';
-      case 'competitor': return '竞品提及';
+      case 'objection': return '异议（客户顾虑）';
+      case 'no_next_step': return '无下一步（未推进）';
+      case 'engagement': return '低参与度（客户反应）';
+      case 'buying': return '高需求（购买意向）';
+      case 'competitor': return '竞品提及（对比他牌）';
+      case 'behavior_structure': return '是否结构化';
+      case 'behavior_emotion_tone_pace': return '情绪/态度/语速';
       case 'behavior_active_selling': return '主动销售行为';
       case 'behavior_listening': return '倾听';
       case 'behavior_opening_completeness': return '开场白完整度';
@@ -64,6 +70,8 @@ export default function CoachConversationDetailPage() {
       case 'event_pricing': return '探价';
       case 'event_schedule': return '拟定时间';
       case 'event_rejection': return '拒绝';
+      case 'event_delay': return '拖延';
+      case 'event_urgency': return '紧急';
       default: return t;
     }
   };
@@ -74,6 +82,11 @@ export default function CoachConversationDetailPage() {
       case 'low': return '低';
       default: return s;
     }
+  };
+
+  const categoryOf = (t: string): 'behavior' | 'event' => {
+    if (t.startsWith('behavior_') || t === 'engagement') return 'behavior';
+    return 'event';
   };
 
   return (
@@ -194,7 +207,7 @@ export default function CoachConversationDetailPage() {
 
             <TabsContent value="behavior">
               <div className="space-y-2 mt-3">
-                {signals.filter(s => (s as any).category === 'behavior' || s.type === 'engagement' || s.type.startsWith('behavior_')).map((s) => {
+                {signals.filter(s => categoryOf(s.type) === 'behavior').map((s) => {
                   const anchor = findEntryBySnippet(s.snippet);
                   return (
                     <div key={s.id} className="p-3 border rounded-lg">
@@ -223,7 +236,7 @@ export default function CoachConversationDetailPage() {
 
             <TabsContent value="event">
               <div className="space-y-2 mt-3">
-                {signals.filter(s => (s as any).category === 'event' || ['objection','no_next_step','buying','competitor'].includes(s.type) || s.type.startsWith('event_')).map((s) => {
+                {signals.filter(s => categoryOf(s.type) === 'event').map((s) => {
                   const anchor = findEntryBySnippet(s.snippet);
                   return (
                     <div key={s.id} className="p-3 border rounded-lg">
