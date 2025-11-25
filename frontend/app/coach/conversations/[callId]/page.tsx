@@ -33,11 +33,11 @@ export default function CoachConversationDetailPage() {
   };
   const typeBadgeVariant = (t: string) => {
     switch (t) {
-      case 'buying': return 'success';
-      case 'objection': return 'destructive';
-      case 'no_next_step': return 'warning';
-      case 'competitor': return 'destructive';
-      case 'engagement': return 'default';
+      case 'event_buying': return 'success';
+      case 'event_objection': return 'destructive';
+      case 'event_no_next_step': return 'warning';
+      case 'event_competitor': return 'destructive';
+      case 'behavior_engagement': return 'default';
       case 'behavior_structure': return 'success';
       case 'behavior_emotion_tone_pace': return 'default';
       case 'behavior_active_selling': return 'success';
@@ -55,11 +55,11 @@ export default function CoachConversationDetailPage() {
   };
   const typeLabel = (t: string) => {
     switch (t) {
-      case 'objection': return '异议（客户顾虑）';
-      case 'no_next_step': return '无下一步（未推进）';
-      case 'engagement': return '低参与度（客户反应）';
-      case 'buying': return '高需求（购买意向）';
-      case 'competitor': return '竞品提及（对比他牌）';
+      case 'event_objection': return '异议（客户顾虑）';
+      case 'event_no_next_step': return '无下一步（未推进）';
+      case 'behavior_engagement': return '低参与度（客户反应）';
+      case 'event_buying': return '高需求（购买意向）';
+      case 'event_competitor': return '竞品提及（对比他牌）';
       case 'behavior_structure': return '是否结构化';
       case 'behavior_emotion_tone_pace': return '情绪/态度/语速';
       case 'behavior_active_selling': return '主动销售行为';
@@ -85,7 +85,7 @@ export default function CoachConversationDetailPage() {
   };
 
   const categoryOf = (t: string): 'behavior' | 'event' => {
-    if (t.startsWith('behavior_') || t === 'engagement') return 'behavior';
+    if (t.startsWith('behavior_')) return 'behavior';
     return 'event';
   };
 

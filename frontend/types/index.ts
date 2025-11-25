@@ -267,11 +267,11 @@ export interface CallTranscriptEntry {
 }
 
 export type CallSignalType =
-  | 'objection'
-  | 'no_next_step'
-  | 'competitor'
-  | 'buying'
-  | 'engagement'
+  | 'behavior_engagement'
+  | 'event_objection'
+  | 'event_no_next_step'
+  | 'event_competitor'
+  | 'event_buying'
   | 'behavior_structure'
   | 'behavior_emotion_tone_pace'
   | 'behavior_active_selling'

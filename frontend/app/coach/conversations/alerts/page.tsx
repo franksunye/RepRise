@@ -30,11 +30,11 @@ export default function CoachAlertsPage() {
 
   const typeLabel = (t: string) => {
     switch (t) {
-      case 'objection': return '异议';
-      case 'no_next_step': return '无下一步';
-      case 'competitor': return '竞争者提及';
-      case 'buying': return '高需求（购买意向）';
-      case 'engagement': return '低参与度';
+      case 'event_objection': return '异议（客户顾虑）';
+      case 'event_no_next_step': return '无下一步（未推进）';
+      case 'event_competitor': return '竞品提及（对比他牌）';
+      case 'event_buying': return '高需求（购买意向）';
+      case 'behavior_engagement': return '低参与度';
       case 'behavior_structure': return '是否结构化';
       case 'behavior_emotion_tone_pace': return '情绪/态度/语速';
       case 'behavior_active_selling': return '主动销售行为';
@@ -97,13 +97,13 @@ export default function CoachAlertsPage() {
               <SelectTrigger><SelectValue placeholder="类型" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">全部类型</SelectItem>
-                <SelectItem value="objection">异议</SelectItem>
-                <SelectItem value="no_next_step">无下一步</SelectItem>
-                <SelectItem value="competitor">竞争者提及</SelectItem>
-                <SelectItem value="buying">买家信号</SelectItem>
+                <SelectItem value="event_objection">异议（客户顾虑）</SelectItem>
+                <SelectItem value="event_no_next_step">无下一步（未推进）</SelectItem>
+                <SelectItem value="event_competitor">竞品提及</SelectItem>
+                <SelectItem value="event_buying">购买意向</SelectItem>
                 <SelectItem value="behavior_structure">是否结构化</SelectItem>
                 <SelectItem value="behavior_emotion_tone_pace">情绪/态度/语速</SelectItem>
-                <SelectItem value="engagement">低参与度</SelectItem>
+                <SelectItem value="behavior_engagement">低参与度</SelectItem>
                 <SelectItem value="behavior_active_selling">主动销售行为</SelectItem>
                 <SelectItem value="behavior_listening">倾听</SelectItem>
                 <SelectItem value="behavior_opening_completeness">开场白完整度</SelectItem>
@@ -178,7 +178,7 @@ export default function CoachAlertsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-lg bg-red-100 flex items-center justify-center">
-                      {s.type === 'buying' ? (
+                      {s.type === 'event_buying' ? (
                         <ThumbsUp className="h-5 w-5 text-green-600" />
                       ) : (
                         <AlertTriangle className="h-5 w-5 text-red-600" />
@@ -220,10 +220,10 @@ export default function CoachAlertsPage() {
                   {items.map((s) => (
                     <Card key={s.id} className="hover:shadow-lg transition-shadow">
                       <CardHeader className="pb-3">
-                        <div className="flex items-start justify之间">
+                        <div className="flex items-start justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-lg bg-red-100 flex items中心 justify-center">
-                              {s.type === 'buying' ? (
+                            <div className="h-10 w-10 rounded-lg bg-red-100 flex items-center justify-center">
+                              {s.type === 'event_buying' ? (
                                 <ThumbsUp className="h-5 w-5 text-green-600" />
                               ) : (
                                 <AlertTriangle className="h-5 w-5 text-red-600" />
