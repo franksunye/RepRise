@@ -28,6 +28,25 @@ export default function CoachAlertsPage() {
     });
   }, [type, severity, repId]);
 
+  const typeLabel = (t: string) => {
+    switch (t) {
+      case 'objection': return '异议';
+      case 'no_next_step': return '无下一步';
+      case 'competitor': return '竞争者提及';
+      case 'buying': return '买家信号';
+      case 'engagement': return '参与度';
+      default: return t;
+    }
+  };
+  const severityLabel = (s: string) => {
+    switch (s) {
+      case 'high': return '高';
+      case 'medium': return '中';
+      case 'low': return '低';
+      default: return s;
+    }
+  };
+
   const topByRep = useMemo(() => {
     const map: Record<string, number> = {};
     filtered.forEach(s => { map[s.repId] = (map[s.repId] || 0) + (s.severity === 'high' ? 2 : 1); });
@@ -117,7 +136,7 @@ export default function CoachAlertsPage() {
               <div className="space-y-2">
                 {topByType.map(([t, count]) => (
                   <div key={t} className="flex items-center justify-between text-sm">
-                    <span>{t}</span>
+                    <span>{typeLabel(t)}</span>
                     <Badge variant="outline">{count}</Badge>
                   </div>
                 ))}
@@ -142,12 +161,12 @@ export default function CoachAlertsPage() {
                       )}
                     </div>
                     <div>
-                      <CardTitle className="text-lg">{s.type}</CardTitle>
+                      <CardTitle className="text-lg">{typeLabel(s.type)}</CardTitle>
                       <CardDescription>{s.snippet}</CardDescription>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{s.severity}</Badge>
+                    <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
                   </div>
                 </div>
               </CardHeader>
@@ -187,12 +206,12 @@ export default function CoachAlertsPage() {
                               )}
                             </div>
                             <div>
-                              <CardTitle className="text-lg">{s.type}</CardTitle>
+                              <CardTitle className="text-lg">{typeLabel(s.type)}</CardTitle>
                               <CardDescription>{s.snippet}</CardDescription>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{s.severity}</Badge>
+                            <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
                           </div>
                         </div>
                       </CardHeader>

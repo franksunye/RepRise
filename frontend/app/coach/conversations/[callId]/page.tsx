@@ -51,6 +51,14 @@ export default function CoachConversationDetailPage() {
       default: return t;
     }
   };
+  const severityLabel = (s: string) => {
+    switch (s) {
+      case 'high': return '高';
+      case 'medium': return '中';
+      case 'low': return '低';
+      default: return s;
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -156,7 +164,7 @@ export default function CoachConversationDetailPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-xs text-gray-500">
                             <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
-                            <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{s.severity}</Badge>
+                            <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
                             {anchor && (
                               <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
                             )}
@@ -204,7 +212,7 @@ export default function CoachConversationDetailPage() {
                   <div key={s.id} className="p-3 border rounded-lg">
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <Badge variant="outline">{typeLabel(s.type)}</Badge>
-                      <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{s.severity}</Badge>
+                      <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
                     </div>
                     <p className="text-sm mt-2">{s.snippet}</p>
                   </div>
