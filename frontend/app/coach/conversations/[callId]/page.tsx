@@ -132,6 +132,43 @@ export default function CoachConversationDetailPage() {
         </CardContent>
       </Card>
 
+      <Card id="signals-section">
+        <CardHeader>
+          <CardTitle className="flex items中心 gap-2">
+            <MessageSquare className="h-5 w-5 text-blue-600" /> 信号
+          </CardTitle>
+          <CardDescription>对话中识别到的风险与商机</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {signals.map((s) => {
+              const anchor = findEntryBySnippet(s.snippet);
+              return (
+                <div key={s.id} className="p-3 border rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
+                      <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
+                      {anchor && (
+                        <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" variant="outline">创建行动项</Button>
+                      <Button size="sm" variant="ghost">添加笔记</Button>
+                    </div>
+                  </div>
+                  <p className="text-sm mt-2">{s.snippet}</p>
+                  {anchor && (
+                    <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -147,39 +184,13 @@ export default function CoachConversationDetailPage() {
           </TabsList>
 
             <TabsContent value="summary">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-3">
-                <div className="lg:col-span-2 p-3 border rounded-lg">
-                  <div className="flex items-center justify之间">
+              <div className="mt-3">
+                <div className="p-3 border rounded-lg">
+                  <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-gray-700">通话摘要</p>
                     <Button variant="ghost" size="sm"><Edit3 className="h-4 w-4 mr-2" /> 编辑摘要</Button>
                   </div>
                   <p className="text-sm text-gray-800 mt-2">{summary}</p>
-                </div>
-                <div className="space-y-2">
-                  {signals.map((s) => {
-                    const anchor = findEntryBySnippet(s.snippet);
-                    return (
-                      <div key={s.id} className="p-3 border rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
-                            <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
-                            {anchor && (
-                              <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button size="sm" variant="outline">创建行动项</Button>
-                            <Button size="sm" variant="ghost">添加笔记</Button>
-                          </div>
-                        </div>
-                        <p className="text-sm mt-2">{s.snippet}</p>
-                        {anchor && (
-                          <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
-                        )}
-                      </div>
-                    );
-                  })}
                 </div>
               </div>
             </TabsContent>
