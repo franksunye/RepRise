@@ -9,7 +9,8 @@ import { ArrowLeft, Phone, MessageSquare, Target, PlusCircle, Calendar, Clock, P
 import { getCallById, getCallTranscriptByCallId, getSignalsByCallId } from '@/data/mock-data';
 import type { CallTranscriptEntry } from '@/types';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
 
 export default function CoachConversationDetailPage() {
   const params = useParams();
@@ -97,70 +98,162 @@ export default function CoachConversationDetailPage() {
     return 'event';
   };
 
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedSignalId, setSelectedSignalId] = useState<string | null>(null);
+  const selectedSignal = useMemo(() => signals.find(s => s.id === selectedSignalId) || null, [signals, selectedSignalId]);
+  const [hoverTimer, setHoverTimer] = useState<NodeJS.Timeout | null>(null);
+  const [playheadMs, setPlayheadMs] = useState<number>(0);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const playIntervalRef = useRef<number | null>(null);
+
+  const signalOffsetMs = useMemo(() => {
+    if (!call || !selectedSignal) return null;
+    const base = new Date(call.startedAt).getTime();
+    const ts = new Date(selectedSignal.timestamp).getTime();
+    return Math.max(0, ts - base);
+  }, [call, selectedSignal]);
+
+  useEffect(() => {
+    if (!detailOpen) {
+      setIsPlaying(false);
+      setPlayheadMs(0);
+    }
+  }, [detailOpen]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      const id = window.setInterval(() => {
+        setPlayheadMs((v) => Math.min((call?.durationMs || 0), v + 500));
+      }, 500);
+      playIntervalRef.current = id;
+      return () => {
+        if (playIntervalRef.current) window.clearInterval(playIntervalRef.current);
+      };
+    } else {
+      if (playIntervalRef.current) window.clearInterval(playIntervalRef.current);
+      playIntervalRef.current = null;
+    }
+  }, [isPlaying, call?.durationMs]);
+
+  const openDetail = (id: string) => {
+    setSelectedSignalId(id);
+    setDetailOpen(true);
+    if (signalOffsetMs) setPlayheadMs(signalOffsetMs);
+  };
+
+  const scheduleHoverOpen = (id: string) => {
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+    }
+    const t = setTimeout(() => openDetail(id), 350);
+    setHoverTimer(t);
+  };
+
+  const cancelHoverOpen = () => {
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+      setHoverTimer(null);
+    }
+  };
+
+  const contextWindowMs = 20000;
+  const contextEntries = useMemo(() => {
+    if (!selectedSignal || !call) return [];
+    const base = new Date(call.startedAt).getTime();
+    const ts = new Date(selectedSignal.timestamp).getTime();
+    const center = ts - base;
+    const start = Math.max(0, center - contextWindowMs);
+    const end = center + contextWindowMs;
+    return transcript.filter(e => e.startMs >= start && e.startMs <= end);
+  }, [selectedSignal, call, transcript]);
+
+  const coOccurringSignals = useMemo(() => {
+    if (!selectedSignal || !call) return [];
+    const base = new Date(call.startedAt).getTime();
+    const ts = new Date(selectedSignal.timestamp).getTime();
+    const center = ts - base;
+    const start = Math.max(0, center - 30000);
+    const end = center + 30000;
+    return signals.filter(s => {
+      const st = new Date(s.timestamp).getTime();
+      const off = st - base;
+      return s.id !== selectedSignal.id && off >= start && off <= end;
+    });
+  }, [selectedSignal, call, signals]);
+
+  const [noteText, setNoteText] = useState('');
+  const [notes, setNotes] = useState<{ id: string; text: string; createdAt: string }[]>([]);
+  const addNoteLocal = () => {
+    if (!noteText.trim()) return;
+    const n = { id: `note-${Date.now()}`, text: noteText.trim(), createdAt: new Date().toISOString() };
+    setNotes([n, ...notes]);
+    setNoteText('');
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Breadcrumb */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+      <div className="flex justify-between items-center">
+        <div className="flex gap-2 items-center text-sm text-gray-600">
           <Link href="/coach/conversations" className="hover:underline">通话记录</Link>
           <span>/</span>
           <span>详情</span>
         </div>
         {/* Persistent actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex gap-2 items-center">
           <Button asChild>
             <Link href="/coach/tasks/create">
-              <PlusCircle className="h-4 w-4 mr-2" /> 创建任务
+              <PlusCircle className="mr-2 w-4 h-4" /> 创建任务
             </Link>
           </Button>
           <Button variant="outline" asChild>
             <Link href="/coach/feedback/new">
-              <Target className="h-4 w-4 mr-2" /> 记录反馈
+              <Target className="mr-2 w-4 h-4" /> 记录反馈
             </Link>
           </Button>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex gap-4 items-center">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/coach/inbox">
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="w-4 h-4" />
           </Link>
         </Button>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">通话详情</h1>
-          <p className="text-gray-600 mt-1">Call ID: {callId}（此页面为 UI 骨架）</p>
+          <p className="mt-1 text-gray-600">Call ID: {callId}（此页面为 UI 骨架）</p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Phone className="h-5 w-5 text-blue-600" /> 通话概览
+          <CardTitle className="flex gap-2 items-center">
+            <Phone className="w-5 h-5 text-blue-600" /> 通话概览
           </CardTitle>
           <CardDescription>时间、参与人、摘要与可教点</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-sm text-gray-600">
-            <div className="flex items-center gap-3">
+            <div className="flex gap-3 items-center">
               <Badge variant={isAnalyzed ? 'success' : 'warning'}>{isAnalyzed ? '已分析' : '待分析'}</Badge>
               {call && (
-                <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{new Date(call.startedAt).toLocaleString('zh-CN')}</span>
+                <span className="flex gap-1 items-center"><Calendar className="w-3 h-3" />{new Date(call.startedAt).toLocaleString('zh-CN')}</span>
               )}
               {call && (
-                <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{Math.round(call.durationMs / 60000)} 分钟</span>
+                <span className="flex gap-1 items-center"><Clock className="w-3 h-3" />{Math.round(call.durationMs / 60000)} 分钟</span>
               )}
             </div>
             <p className="mt-2">管家：{call ? call.repId : ''} · 客户：{call ? call.customer : ''}</p>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">片段摘要</p>
+            <p className="mb-2 text-sm font-medium text-gray-700">片段摘要</p>
             <p className="text-gray-800">“你们的价格比其他公司高太多了，我考虑一下再说吧。”</p>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">可教点</p>
-            <div className="flex items-center gap-2 text-sm">
+            <p className="mb-2 text-sm font-medium text-gray-700">可教点</p>
+            <div className="flex gap-2 items-center text-sm">
               <Badge variant="outline">异议</Badge>
               <Badge variant="outline">无下一步</Badge>
               <Badge variant="outline">低参与度</Badge>
@@ -171,8 +264,8 @@ export default function CoachConversationDetailPage() {
 
       <Card id="signals-section">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-blue-600" /> 信号
+          <CardTitle className="flex gap-2 items-center">
+            <MessageSquare className="w-5 h-5 text-blue-600" /> 信号
           </CardTitle>
           <CardDescription>对话中识别到的风险与商机，具体包括三个类别，分别是销售行为类（Rep Behaviors）、对话事件类（Event）、服务问题类（Issue）。其中销售行为会包括通话结构 /流程识别类和行为细节，对话事件类关注的是客户的意向（Intent Signals）。</CardDescription>
         </CardHeader>
@@ -186,25 +279,31 @@ export default function CoachConversationDetailPage() {
             </TabsList>
 
             <TabsContent value="all">
-              <div className="space-y-2 mt-3">
+              <div className="mt-3 space-y-2">
                 {signals.map((s) => {
                   const anchor = findEntryBySnippet(s.snippet);
                   return (
-                    <div key={s.id} className="p-3 border rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div
+                      key={s.id}
+                      className="p-3 rounded-lg border cursor-pointer hover:bg-gray-50"
+                      onClick={() => openDetail(s.id)}
+                      onMouseEnter={() => scheduleHoverOpen(s.id)}
+                      onMouseLeave={cancelHoverOpen}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex gap-2 items-center text-xs text-gray-500">
                           <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
                           <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
                           {anchor && (
                             <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex gap-2 items-center">
                           <Button size="sm" variant="outline">创建行动项</Button>
                           <Button size="sm" variant="ghost">添加笔记</Button>
                         </div>
                       </div>
-                      <p className="text-sm mt-2">{s.snippet}</p>
+                      <p className="mt-2 text-sm">{s.snippet}</p>
                       {anchor && (
                         <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
                       )}
@@ -215,25 +314,31 @@ export default function CoachConversationDetailPage() {
             </TabsContent>
 
             <TabsContent value="behavior">
-              <div className="space-y-2 mt-3">
+              <div className="mt-3 space-y-2">
                 {signals.filter(s => categoryOf(s.type) === 'behavior').map((s) => {
                   const anchor = findEntryBySnippet(s.snippet);
                   return (
-                    <div key={s.id} className="p-3 border rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div
+                      key={s.id}
+                      className="p-3 rounded-lg border cursor-pointer hover:bg-gray-50"
+                      onClick={() => openDetail(s.id)}
+                      onMouseEnter={() => scheduleHoverOpen(s.id)}
+                      onMouseLeave={cancelHoverOpen}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex gap-2 items-center text-xs text-gray-500">
                           <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
                           <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
                           {anchor && (
                             <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex gap-2 items-center">
                           <Button size="sm" variant="outline">创建行动项</Button>
                           <Button size="sm" variant="ghost">添加笔记</Button>
                         </div>
                       </div>
-                      <p className="text-sm mt-2">{s.snippet}</p>
+                      <p className="mt-2 text-sm">{s.snippet}</p>
                       {anchor && (
                         <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
                       )}
@@ -244,25 +349,31 @@ export default function CoachConversationDetailPage() {
             </TabsContent>
 
             <TabsContent value="event">
-              <div className="space-y-2 mt-3">
+              <div className="mt-3 space-y-2">
                 {signals.filter(s => categoryOf(s.type) === 'event').map((s) => {
                   const anchor = findEntryBySnippet(s.snippet);
                   return (
-                    <div key={s.id} className="p-3 border rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div
+                      key={s.id}
+                      className="p-3 rounded-lg border cursor-pointer hover:bg-gray-50"
+                      onClick={() => openDetail(s.id)}
+                      onMouseEnter={() => scheduleHoverOpen(s.id)}
+                      onMouseLeave={cancelHoverOpen}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex gap-2 items-center text-xs text-gray-500">
                           <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
                           <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
                           {anchor && (
                             <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex gap-2 items-center">
                           <Button size="sm" variant="outline">创建行动项</Button>
                           <Button size="sm" variant="ghost">添加笔记</Button>
                         </div>
                       </div>
-                      <p className="text-sm mt-2">{s.snippet}</p>
+                      <p className="mt-2 text-sm">{s.snippet}</p>
                       {anchor && (
                         <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
                       )}
@@ -273,25 +384,31 @@ export default function CoachConversationDetailPage() {
             </TabsContent>
 
             <TabsContent value="issue">
-              <div className="space-y-2 mt-3">
+              <div className="mt-3 space-y-2">
                 {signals.filter(s => categoryOf(s.type) === 'issue').map((s) => {
                   const anchor = findEntryBySnippet(s.snippet);
                   return (
-                    <div key={s.id} className="p-3 border rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div
+                      key={s.id}
+                      className="p-3 rounded-lg border cursor-pointer hover:bg-gray-50"
+                      onClick={() => openDetail(s.id)}
+                      onMouseEnter={() => scheduleHoverOpen(s.id)}
+                      onMouseLeave={cancelHoverOpen}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex gap-2 items-center text-xs text-gray-500">
                           <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
                           <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
                           {anchor && (
                             <Badge variant="outline">{fmt((transcript.find(e=> anchor===`entry-${e.id}`)?.startMs) || 0)}</Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex gap-2 items-center">
                           <Button size="sm" variant="outline">创建行动项</Button>
                           <Button size="sm" variant="ghost">添加笔记</Button>
                         </div>
                       </div>
-                      <p className="text-sm mt-2">{s.snippet}</p>
+                      <p className="mt-2 text-sm">{s.snippet}</p>
                       {anchor && (
                         <a href={`#${anchor}`} className="text-xs text-blue-600">跳转到转录</a>
                       )}
@@ -304,21 +421,159 @@ export default function CoachConversationDetailPage() {
         </CardContent>
       </Card>
 
+      <Dialog.Root open={detailOpen} onOpenChange={setDetailOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/40" />
+          <Dialog.Content className="fixed top-10 left-1/2 w-full max-w-3xl bg-white rounded-lg shadow-lg -translate-x-1/2 focus:outline-none">
+            <div className="p-6 border-b">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h2 className="text-xl font-semibold">Signal Detail</h2>
+                  <p className="text-sm text-gray-600">信号上下文</p>
+                </div>
+                <Dialog.Close asChild>
+                  <Button variant="ghost" size="sm">关闭</Button>
+                </Dialog.Close>
+              </div>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-600">通话 ID</div>
+                  <div className="text-sm font-medium">{call?.id}</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-600">客户 / 管家 / 时间戳</div>
+                  <div className="text-sm font-medium">{call?.customer} · {call?.repId} · {selectedSignal ? new Date(selectedSignal.timestamp).toLocaleString('zh-CN') : ''}</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-600">信号类别与名称</div>
+                  <div className="flex gap-2 items-center">
+                    {selectedSignal && (
+                      <>
+                        <Badge variant={typeBadgeVariant(selectedSignal.type)}>{typeLabel(selectedSignal.type)}</Badge>
+                        <Badge variant={selectedSignal.severity === 'high' ? 'destructive' : selectedSignal.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(selectedSignal.severity)}</Badge>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-600">自动判定依据 / 置信度</div>
+                  <div className="text-sm font-medium">N/A</div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm font-medium text-gray-700">对话片段与上下文</p>
+                  <div className="flex gap-2 items-center">
+                    <Button variant="outline" size="sm" onClick={() => setIsPlaying(true)}><Play className="mr-2 w-4 h-4" /> 播放</Button>
+                    <Button variant="ghost" size="sm" onClick={() => setIsPlaying(false)}><Pause className="mr-2 w-4 h-4" /> 暂停</Button>
+                  </div>
+                </div>
+                <div className="flex gap-3 items-center">
+                  <input
+                    type="range"
+                    min={0}
+                    max={(call?.durationMs || 0)}
+                    value={playheadMs}
+                    onChange={(e) => setPlayheadMs(Number(e.target.value))}
+                    className="w-full"
+                  />
+                  <span className="text-xs text-gray-500">{fmt(playheadMs)}</span>
+                </div>
+                <div className="space-y-2">
+                  {contextEntries.map((e) => {
+                    const isTrigger = selectedSignal ? e.text.includes(selectedSignal.snippet) : false;
+                    return (
+                      <div key={e.id} className={`p-3 border rounded-lg ${isTrigger ? 'bg-yellow-50 border-yellow-200' : ''}`}>
+                        <div className="flex justify-between items-center">
+                          <div className="flex gap-2 items-center text-xs text-gray-500">
+                            <Badge variant={e.speaker === 'rep' ? 'default' : 'outline'}>{e.speaker === 'rep' ? 'Rep' : '客户'}</Badge>
+                            <span>{(e.startMs / 1000).toFixed(1)}s</span>
+                          </div>
+                        </div>
+                        <p className="mt-2 text-sm">{e.text}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-gray-700">关联信号</p>
+                {coOccurringSignals.length === 0 ? (
+                  <p className="text-xs text-gray-500">暂无关联信号</p>
+                ) : (
+                  <div className="space-y-2">
+                    {coOccurringSignals.map((s) => (
+                      <div key={s.id} className="p-3 rounded-lg border">
+                        <div className="flex justify-between items-center">
+                          <div className="flex gap-2 items-center text-xs text-gray-500">
+                            <Badge variant={typeBadgeVariant(s.type)}>{typeLabel(s.type)}</Badge>
+                            <Badge variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>{severityLabel(s.severity)}</Badge>
+                          </div>
+                          <Button size="sm" variant="ghost" onClick={() => openDetail(s.id)}>查看</Button>
+                        </div>
+                        <p className="mt-2 text-sm">{s.snippet}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-gray-700">备注与后续任务</p>
+                <div className="flex gap-2 items-center">
+                  <input
+                    value={noteText}
+                    onChange={(e) => setNoteText(e.target.value)}
+                    placeholder="添加评论/建议"
+                    className="flex-1 px-3 py-2 text-sm rounded-md border"
+                  />
+                  <Button size="sm" onClick={addNoteLocal}>添加</Button>
+                </div>
+                {notes.length > 0 && (
+                  <div className="space-y-2">
+                    {notes.map(n => (
+                      <div key={n.id} className="p-3 rounded-lg border">
+                        <div className="text-xs text-gray-500">{new Date(n.createdAt).toLocaleString('zh-CN')}</div>
+                        <p className="mt-1 text-sm">{n.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="flex gap-2 items-center">
+                  <Button variant="outline" size="sm">创建行动项</Button>
+                  <Button variant="outline" size="sm">分配任务</Button>
+                </div>
+              </div>
+
+              <div className="flex gap-2 justify-end items-center">
+                <Button variant="ghost" size="sm">导出 PDF</Button>
+                <Button variant="ghost" size="sm">生成复盘报告</Button>
+                <Button variant="outline" size="sm">标为已复盘</Button>
+              </div>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-blue-600" /> 摘要与高亮
+          <CardTitle className="flex gap-2 items-center">
+            <MessageSquare className="w-5 h-5 text-blue-600" /> 摘要与高亮
           </CardTitle>
           <CardDescription>通话摘要与高亮片段</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mt-1">
-            <div className="p-3 border rounded-lg">
-              <div className="flex items-center justify-between">
+            <div className="p-3 rounded-lg border">
+              <div className="flex justify-between items-center">
                 <p className="text-sm font-medium text-gray-700">通话摘要</p>
-                <Button variant="ghost" size="sm"><Edit3 className="h-4 w-4 mr-2" /> 编辑摘要</Button>
+                <Button variant="ghost" size="sm"><Edit3 className="mr-2 w-4 h-4" /> 编辑摘要</Button>
               </div>
-              <p className="text-sm text-gray-800 mt-2">{summary}</p>
+              <p className="mt-2 text-sm text-gray-800">{summary}</p>
             </div>
           </div>
         </CardContent>
@@ -326,27 +581,27 @@ export default function CoachConversationDetailPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-blue-600" /> 转录与播放器
+          <CardTitle className="flex gap-2 items-center">
+            <MessageSquare className="w-5 h-5 text-blue-600" /> 转录与播放器
           </CardTitle>
           <CardDescription>播放录音并按句浏览转录，支持片段标记</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-2 mb-3 mt-1">
-            <Button variant="outline" size="sm"><Play className="h-4 w-4 mr-2" /> 播放</Button>
-            <Button variant="ghost" size="sm"><Pause className="h-4 w-4 mr-2" /> 暂停</Button>
+          <div className="flex gap-2 items-center mt-1 mb-3">
+            <Button variant="outline" size="sm"><Play className="mr-2 w-4 h-4" /> 播放</Button>
+            <Button variant="ghost" size="sm"><Pause className="mr-2 w-4 h-4" /> 暂停</Button>
           </div>
               <div className="space-y-2">
                 {transcript.map((e: CallTranscriptEntry) => (
-                  <div id={`entry-${e.id}`} key={e.id} className="p-3 border rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <div id={`entry-${e.id}`} key={e.id} className="p-3 rounded-lg border">
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-2 items-center text-xs text-gray-500">
                         <Badge variant={e.speaker === 'rep' ? 'default' : 'outline'}>{e.speaker === 'rep' ? 'Rep' : '客户'}</Badge>
                         <span>{(e.startMs / 1000).toFixed(1)}s</span>
                       </div>
-                      <Button size="sm" variant="ghost"><Flag className="h-4 w-4 mr-2" /> 标记片段</Button>
+                      <Button size="sm" variant="ghost"><Flag className="mr-2 w-4 h-4" /> 标记片段</Button>
                     </div>
-                    <p className="text-sm mt-2">{e.text}</p>
+                    <p className="mt-2 text-sm">{e.text}</p>
                   </div>
                 ))}
               </div>
@@ -357,20 +612,20 @@ export default function CoachConversationDetailPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-purple-600" /> 教练操作
+          <CardTitle className="flex gap-2 items-center">
+            <MessageSquare className="w-5 h-5 text-purple-600" /> 教练操作
           </CardTitle>
           <CardDescription>基于此通话创建辅导任务或记录反馈</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-end gap-2">
+        <CardContent className="flex gap-2 justify-end items-center">
           <Button asChild>
             <Link href="/coach/tasks/create">
-              <PlusCircle className="h-4 w-4 mr-2" /> 创建任务
+              <PlusCircle className="mr-2 w-4 h-4" /> 创建任务
             </Link>
           </Button>
           <Button variant="outline" asChild>
             <Link href="/coach/feedback/new">
-              <Target className="h-4 w-4 mr-2" /> 记录反馈
+              <Target className="mr-2 w-4 h-4" /> 记录反馈
             </Link>
           </Button>
         </CardContent>
