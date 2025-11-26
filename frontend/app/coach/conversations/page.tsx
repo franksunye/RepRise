@@ -25,7 +25,6 @@ export default function CoachConversationsPage() {
     return () => clearTimeout(t);
   }, []);
 
-  const pageSize = 10;
   const [page, setPage] = useState(0);
   const filtered = useMemo(() => {
     return mockCallRecords.filter((r) => {
@@ -79,6 +78,7 @@ export default function CoachConversationsPage() {
       return 0;
     });
   }, [q, analyzed, repId, signalCategory, severity, riskOpp, hasTask, sortBy, reps]);
+  const pageSize = Math.max(filtered.length, 10);
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const pageItems = filtered.slice(page * pageSize, page * pageSize + pageSize);
 
