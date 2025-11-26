@@ -252,12 +252,55 @@ export default function CoachConversationsPage() {
               </div>
               {(() => {
                 const signals = getSignalsByCallId(r.id);
-                const topSignals = signals.slice(0, 3);
+                const labelOf = (t: string) => {
+                  switch (t) {
+                    case 'event_objection': return '异议';
+                    case 'event_no_next_step': return '无下一步';
+                    case 'event_competitor': return '竞品提及';
+                    case 'event_buying': return '高需求';
+                    case 'event_pricing': return '探价';
+                    case 'event_schedule': return '拟定时间';
+                    case 'event_rejection': return '拒绝';
+                    case 'event_delay': return '拖延';
+                    case 'event_urgency': return '紧急';
+                    case 'behavior_engagement': return '低参与度';
+                    case 'behavior_structure': return '是否结构化';
+                    case 'behavior_emotion_tone_pace': return '情绪/态度/语速';
+                    case 'behavior_active_selling': return '主动销售行为';
+                    case 'behavior_listening': return '倾听';
+                    case 'behavior_opening_completeness': return '开场白完整度';
+                    case 'behavior_clarity': return '解释清楚度';
+                    case 'behavior_next_step': return '是否推动下一步';
+                    case 'issue_rep_delay': return '管家上门延迟';
+                    case 'issue_schedule_conflict': return '预约冲突';
+                    case 'issue_customer_wait_long': return '客户等待过久';
+                    default: return null;
+                  }
+                };
+                const severityWeight = (sev: string) => sev === 'high' ? 3 : sev === 'medium' ? 2 : 1;
+                const severityVariant = (sev: string) => sev === 'high' ? 'destructive' : sev === 'medium' ? 'warning' : 'default';
+                const grouped = signals.reduce<Record<string, { count: number; maxSeverity: string }>>((acc, s) => {
+                  const label = labelOf(s.type);
+                  if (!label) return acc;
+                  const key = label;
+                  const current = acc[key];
+                  if (!current) {
+                    acc[key] = { count: 1, maxSeverity: s.severity };
+                  } else {
+                    acc[key] = {
+                      count: current.count + 1,
+                      maxSeverity: severityWeight(s.severity) > severityWeight(current.maxSeverity) ? s.severity : current.maxSeverity,
+                    };
+                  }
+                  return acc;
+                }, {});
+                const entries = Object.entries(grouped);
+                if (entries.length === 0) return null;
                 return (
                   <div className="flex flex-wrap gap-2">
-                    {topSignals.map(s => (
-                      <Badge key={s.id} variant={s.severity === 'high' ? 'destructive' : s.severity === 'medium' ? 'warning' : 'default'}>
-                        {s.type === 'event_buying' ? '高需求' : s.type === 'event_objection' ? '异议' : s.type === 'event_no_next_step' ? '无下一步' : s.type.startsWith('issue_') ? '服务问题' : '行为/事件'}
+                    {entries.map(([label, info]) => (
+                      <Badge key={label} variant={severityVariant(info.maxSeverity)}>
+                        {label}{info.count > 1 ? info.count : ''}
                       </Badge>
                     ))}
                   </div>
