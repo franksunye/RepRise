@@ -132,7 +132,7 @@ export default function CoachConversationsPage() {
                 <SelectValue placeholder="严重性" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">全部</SelectItem>
+                <SelectItem value="all">全部严重性</SelectItem>
                 <SelectItem value="high">高</SelectItem>
                 <SelectItem value="medium">中</SelectItem>
                 <SelectItem value="low">低</SelectItem>
@@ -143,7 +143,7 @@ export default function CoachConversationsPage() {
                 <SelectValue placeholder="风险/商机" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">全部</SelectItem>
+                <SelectItem value="all">全部（风险与商机）</SelectItem>
                 <SelectItem value="risk">风险</SelectItem>
                 <SelectItem value="opportunity">商机</SelectItem>
               </SelectContent>
@@ -153,7 +153,7 @@ export default function CoachConversationsPage() {
                 <SelectValue placeholder="复盘状态" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">全部</SelectItem>
+                <SelectItem value="all">全部复盘状态</SelectItem>
                 <SelectItem value="true">已复盘</SelectItem>
                 <SelectItem value="false">待复盘</SelectItem>
               </SelectContent>
@@ -163,7 +163,7 @@ export default function CoachConversationsPage() {
                 <SelectValue placeholder="行动项" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">全部</SelectItem>
+                <SelectItem value="all">全部行动项状态</SelectItem>
                 <SelectItem value="yes">有行动项</SelectItem>
                 <SelectItem value="no">无行动项</SelectItem>
               </SelectContent>
