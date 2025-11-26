@@ -170,61 +170,61 @@ export default function PlaybookDetailPage() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href="/playbook">
+      <div className="flex gap-4 items-center">
+        <Link href="/content">
           <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="w-5 h-5" />
           </Button>
         </Link>
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex gap-2 items-center mb-1">
             <h1 className="text-3xl font-bold text-gray-900">{playbook.title}</h1>
             <Badge variant="outline">{playbook.category}</Badge>
             <Badge variant="secondary">v{playbook.version}</Badge>
           </div>
-          <div className="flex items-center gap-4 text-sm text-gray-600">
-            <span className="flex items-center gap-1">
-              <User className="h-4 w-4" />
+          <div className="flex gap-4 items-center text-sm text-gray-600">
+            <span className="flex gap-1 items-center">
+              <User className="w-4 h-4" />
               {playbook.author}
             </span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
+            <span className="flex gap-1 items-center">
+              <Clock className="w-4 h-4" />
               更新于 {new Date(playbook.lastUpdated).toLocaleDateString('zh-CN')}
             </span>
-            <span className="flex items-center gap-1">
-              <Download className="h-4 w-4" />
+            <span className="flex gap-1 items-center">
+              <Download className="w-4 h-4" />
               {playbook.downloads} 次下载
             </span>
-            <span className="flex items-center gap-1">
-              <ThumbsUp className="h-4 w-4" />
+            <span className="flex gap-1 items-center">
+              <ThumbsUp className="w-4 h-4" />
               {playbook.likes} 人点赞
             </span>
           </div>
         </div>
         <div className="flex gap-2">
           <Button>
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="mr-2 w-4 h-4" />
             下载 PDF
           </Button>
           <Button variant="outline">
-            <Share2 className="h-4 w-4 mr-2" />
+            <Share2 className="mr-2 w-4 h-4" />
             分享
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
         {/* Main Content */}
         <div className="lg:col-span-3">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
+              <CardTitle className="flex gap-2 items-center">
+                <FileText className="w-5 h-5" />
                 内容详情
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-sm max-w-none">
+              <div className="max-w-none prose prose-sm">
                 <div className="text-sm leading-relaxed">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
@@ -234,7 +234,7 @@ export default function PlaybookDetailPage() {
                         const match = /language-(\w+)/.exec(className || '');
                         if (!inline && match) {
                           return (
-                            <pre className="rounded-md bg-gray-900 text-white p-4 overflow-auto text-xs">
+                            <pre className="overflow-auto p-4 text-xs text-white bg-gray-900 rounded-md">
                               <code className={className} {...rest}>
                                 {String(children).replace(/\n$/, '')}
                               </code>
@@ -242,7 +242,7 @@ export default function PlaybookDetailPage() {
                           );
                         }
                         return (
-                          <code className="bg-gray-100 px-1 rounded text-xs" {...rest}>
+                          <code className="px-1 text-xs bg-gray-100 rounded" {...rest}>
                             {children}
                           </code>
                         );
@@ -292,37 +292,37 @@ export default function PlaybookDetailPage() {
           {/* Version History */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <History className="h-4 w-4" />
+              <CardTitle className="flex gap-2 items-center text-lg">
+                <History className="w-4 h-4" />
                 版本历史
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="text-sm">
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex justify-between items-center mb-1">
                   <span className="font-medium">v1.2.0</span>
                   <Badge variant="success" className="text-xs">
                     当前版本
                   </Badge>
                 </div>
-                <p className="text-gray-600 text-xs">2024-11-10</p>
-                <p className="text-gray-600 text-xs mt-1">
+                <p className="text-xs text-gray-600">2024-11-10</p>
+                <p className="mt-1 text-xs text-gray-600">
                   增加成功案例，优化异议处理话术
                 </p>
               </div>
               <div className="text-sm">
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex justify-between items-center mb-1">
                   <span className="font-medium">v1.1.0</span>
                 </div>
-                <p className="text-gray-600 text-xs">2024-10-15</p>
-                <p className="text-gray-600 text-xs mt-1">增加常见异议处理部分</p>
+                <p className="text-xs text-gray-600">2024-10-15</p>
+                <p className="mt-1 text-xs text-gray-600">增加常见异议处理部分</p>
               </div>
               <div className="text-sm">
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex justify-between items-center mb-1">
                   <span className="font-medium">v1.0.0</span>
                 </div>
-                <p className="text-gray-600 text-xs">2024-09-01</p>
-                <p className="text-gray-600 text-xs mt-1">初始版本</p>
+                <p className="text-xs text-gray-600">2024-09-01</p>
+                <p className="mt-1 text-xs text-gray-600">初始版本</p>
               </div>
             </CardContent>
           </Card>
@@ -334,11 +334,11 @@ export default function PlaybookDetailPage() {
             </CardHeader>
             <CardContent className="space-y-2">
               <Button className="w-full" variant="outline">
-                <ThumbsUp className="h-4 w-4 mr-2" />
+                <ThumbsUp className="mr-2 w-4 h-4" />
                 点赞
               </Button>
               <Button className="w-full" variant="outline">
-                <Share2 className="h-4 w-4 mr-2" />
+                <Share2 className="mr-2 w-4 h-4" />
                 分享给同事
               </Button>
               <Button className="w-full" variant="outline">
@@ -354,22 +354,22 @@ export default function PlaybookDetailPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="text-sm">
-                <Link href="/playbook/playbook-2" className="font-medium hover:text-primary">
+                <Link href="/content/playbook-2" className="font-medium hover:text-primary">
                   上门勘查检查清单
                 </Link>
-                <p className="text-gray-600 text-xs mt-1">勘查 · 检查清单</p>
+                <p className="mt-1 text-xs text-gray-600">勘查 · 检查清单</p>
               </div>
               <div className="text-sm">
                 <Link href="#" className="font-medium hover:text-primary">
                   电话跟进话术
                 </Link>
-                <p className="text-gray-600 text-xs mt-1">跟进 · 话术脚本</p>
+                <p className="mt-1 text-xs text-gray-600">跟进 · 话术脚本</p>
               </div>
               <div className="text-sm">
                 <Link href="#" className="font-medium hover:text-primary">
                   异议处理话术集
                 </Link>
-                <p className="text-gray-600 text-xs mt-1">异议 · 话术脚本</p>
+                <p className="mt-1 text-xs text-gray-600">异议 · 话术脚本</p>
               </div>
             </CardContent>
           </Card>

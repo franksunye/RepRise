@@ -24,16 +24,14 @@ const categories = [
   { id: 'objection-handling', name: '异议处理', count: 2, icon: MessageSquare },
 ];
 
-export default function PlaybookPage() {
+export default function ContentCenterPage() {
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">内容中心</h1>
         <p className="text-gray-600 mt-1">查找和使用销售话术、模板和最佳实践</p>
       </div>
 
-      {/* Search & Filter */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex gap-4">
@@ -53,15 +51,11 @@ export default function PlaybookPage() {
         </CardContent>
       </Card>
 
-      {/* Categories */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {categories.map((category) => {
           const Icon = category.icon || BookOpen;
           return (
-            <Card
-              key={category.id}
-              className="hover:shadow-lg transition-shadow cursor-pointer"
-            >
+            <Card key={category.id} className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -78,7 +72,6 @@ export default function PlaybookPage() {
         })}
       </div>
 
-      {/* Popular Content */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -102,14 +95,12 @@ export default function PlaybookPage() {
                 'objection-handling': MessageSquare,
               };
               const Icon = categoryIcons[item.category];
-
               const categoryNames = {
                 script: '话术脚本',
                 template: '报价模板',
                 checklist: '检查清单',
                 'objection-handling': '异议处理',
               };
-
               return (
                 <Card key={item.id} className="hover:shadow-md transition-shadow">
                   <CardHeader>
@@ -173,7 +164,6 @@ export default function PlaybookPage() {
         </CardContent>
       </Card>
 
-      {/* All Content */}
       <Card>
         <CardHeader>
           <CardTitle>所有内容</CardTitle>
@@ -213,44 +203,23 @@ export default function PlaybookPage() {
                 tags: ['跟进', '电话', '客户关系'],
               },
             ].map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-              >
+              <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex items-center gap-4 flex-1">
-                  <div className="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center">
-                    <FileText className="h-6 w-6 text-gray-600" />
+                  <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                    <BookOpen className="h-5 w-5 text-gray-600" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-medium">{item.title}</h4>
-                      <Badge variant="outline" className="text-xs">
-                        {item.category}
-                      </Badge>
-                      <Badge variant="secondary" className="text-xs">
-                        v{item.version}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <span className="flex items-center gap-1">
-                        <User className="h-3 w-3" />
-                        {item.author}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {new Date(item.lastUpdated).toLocaleDateString('zh-CN')}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Download className="h-3 w-3" />
-                        {item.downloads} 次下载
-                      </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium">{item.title}</p>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">{item.category}</Badge>
+                      <Badge variant="secondary" className="text-xs">v{item.version}</Badge>
                     </div>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    查看
-                  </Button>
+                  <Link href={`/content/${item.id}`}>
+                    <Button variant="outline" size="sm">查看详情</Button>
+                  </Link>
                   <Button variant="ghost" size="sm">
                     <Download className="h-4 w-4" />
                   </Button>

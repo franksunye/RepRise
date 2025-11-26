@@ -399,10 +399,10 @@ export function RepHome() {
                 <span className="text-xs text-gray-500">议价谈判</span>
               </Button>
             </Link>
-            <Link href="/playbook">
+            <Link href="/content">
               <Button variant="outline" className="h-24 w-full flex flex-col gap-2 hover:border-orange-500 hover:bg-orange-50">
                 <BookOpen className="h-6 w-6 text-orange-600" />
-                <span className="font-medium">内容库</span>
+                <span className="font-medium">内容中心</span>
                 <span className="text-xs text-gray-500">话术脚本</span>
               </Button>
             </Link>

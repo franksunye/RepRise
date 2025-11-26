@@ -53,7 +53,7 @@ export const navigation: RoleNavigation = {
         { name: '会话管理', href: '/practice/sessions', icon: MessageSquare },
         { name: '开始练习', href: '/practice/start', icon: MessageSquare },
         { name: '反思日志', href: '/reflection', icon: FileText },
-        { name: '内容库', href: '/playbook', icon: BookOpen },
+        { name: '内容中心', href: '/content', icon: BookOpen },
       ],
     },
     {
@@ -145,8 +145,8 @@ export const navigation: RoleNavigation = {
       ],
     },
     {
-      name: '内容库',
-      href: '/playbook',
+      name: '内容中心',
+      href: '/content',
       icon: BookOpen,
     },
   ],
