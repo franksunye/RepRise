@@ -124,7 +124,22 @@ export default function RepConversationsPage() {
                 <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{new Date(r.startedAt).toLocaleString('zh-CN')}</span>
                 <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{Math.round(r.durationMs / 60000)} 分钟</span>
                 {!!(r.tags && r.tags.length) && (
-                  <span className="flex items-center gap-1"><Tag className="h-3 w-3" />{r.tags.join(' / ')}</span>
+                  <span className="flex items-center gap-1">
+                    <Tag className="h-3 w-3" />
+                    {(() => {
+                      const tagName = (t: string) => {
+                        switch (t) {
+                          case 'cold-call': return '首次电话';
+                          case 'pricing': return '报价';
+                          case 'follow-up': return '跟进';
+                          case 'on-site': return '上门';
+                          case 'objection': return '异议';
+                          default: return t;
+                        }
+                      };
+                      return r.tags.map(tagName).join(' / ');
+                    })()}
+                  </span>
                 )}
                 <span className="flex items-center gap-1">
                   <Badge variant="outline">信号 {getSignalsByCallId(r.id).length}</Badge>
