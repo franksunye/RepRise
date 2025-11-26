@@ -53,7 +53,17 @@ export const navigation: RoleNavigation = {
         { name: '会话管理', href: '/practice/sessions', icon: MessageSquare },
         { name: '开始练习', href: '/practice/start', icon: MessageSquare },
         { name: '反思日志', href: '/reflection', icon: FileText },
-        { name: '内容中心', href: '/content', icon: BookOpen },
+      ],
+    },
+    {
+      name: '内容中心',
+      icon: BookOpen,
+      children: [
+        { name: '全部内容', href: '/content', icon: BookOpen },
+        { name: '话术脚本', href: '/content?category=script', icon: MessageSquare },
+        { name: '报价模板', href: '/content?category=template', icon: FileText },
+        { name: '检查清单', href: '/content?category=checklist', icon: ClipboardList },
+        { name: '异议处理', href: '/content?category=objection-handling', icon: MessageSquare },
       ],
     },
     {
