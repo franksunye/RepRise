@@ -26,6 +26,32 @@ export default function PlaybookDetailPage() {
     downloads: 156,
     likes: 45,
     tags: ['电话', '首次沟通', '预约'],
+    description:
+      '用于首次与客户沟通时的标准话术，提升专业性与转化率，覆盖开场、需求确认、建立信任、预约上门、结束语与常见异议处理等环节。',
+    contentType: 'script',
+    format: 'docx',
+    purpose: ['培训材料', '内部参考', '销售话术'],
+    productLine: ['防水维修服务'],
+    language: '中文',
+    ownerTeam: 'Enablement 团队',
+    createdAt: '2024-09-01T10:00:00Z',
+    lastModifiedAt: '2024-11-10T08:30:00Z',
+    status: '已发布',
+    industryVertical: ['家庭维修', '物业维护'],
+    buyerPersona: ['价格敏感型客户', '忙碌决策者'],
+    dealStage: '线索/初次沟通',
+    region: ['国内', '华东'],
+    usageRights: '内部使用，仅限员工',
+    notes:
+      '上架前已由教练审核；适用于首次通话，后续跟进另有脚本；如用于对外，请先征得市场部许可。',
+    relatedAssets: [
+      { id: 'checklist-1', title: '上门勘查检查清单', href: '/playbook/playbook-2' },
+      { id: 'objection-collection', title: '异议处理话术集', href: '#' },
+    ],
+    customFields: {
+      campaign: 'Q4-Conversion-Boost',
+      projectCode: 'ENBL-PLBK-0001',
+    },
     content: `
 # 首次电话沟通话术
 
@@ -273,6 +299,141 @@ export default function PlaybookDetailPage() {
 
         {/* Sidebar */}
         <div className="space-y-4">
+          {/* Metadata */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">元数据</CardTitle>
+              <CardDescription>内容资产的基础信息与扩展字段</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-xs text-gray-500">必填字段</div>
+                <div className="grid grid-cols-1 gap-2">
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">唯一标识</span>
+                    <span className="text-sm font-medium">{playbook.id}</span>
+                  </div>
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">标题</span>
+                    <span className="text-sm font-medium">{playbook.title}</span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm text-gray-600">摘要</span>
+                    <span className="text-sm">{playbook.description}</span>
+                  </div>
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">内容类型</span>
+                    <Badge variant="outline" className="text-xs">{playbook.contentType}</Badge>
+                  </div>
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">文件格式</span>
+                    <Badge variant="secondary" className="text-xs">{playbook.format}</Badge>
+                  </div>
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">语言</span>
+                    <span className="text-sm">{playbook.language}</span>
+                  </div>
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">归属团队</span>
+                    <span className="text-sm">{playbook.ownerTeam}</span>
+                  </div>
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">创建时间</span>
+                    <span className="text-sm">{new Date(playbook.createdAt).toLocaleString('zh-CN')}</span>
+                  </div>
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">最近修改</span>
+                    <span className="text-sm">{new Date(playbook.lastModifiedAt).toLocaleString('zh-CN')}</span>
+                  </div>
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">状态</span>
+                    <Badge className="text-xs">{playbook.status}</Badge>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="text-xs text-gray-500">推荐字段</div>
+                <div className="space-y-2">
+                  <div>
+                    <div className="mb-1 text-sm text-gray-600">用途/场景</div>
+                    <div className="flex flex-wrap gap-2">
+                      {playbook.purpose.map((p: string, i: number) => (
+                        <Badge key={i} variant="outline" className="text-xs">{p}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-sm text-gray-600">产品/业务线</div>
+                    <div className="flex flex-wrap gap-2">
+                      {playbook.productLine.map((p: string, i: number) => (
+                        <Badge key={i} variant="secondary" className="text-xs">{p}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-sm text-gray-600">行业(Vertical)</div>
+                    <div className="flex flex-wrap gap-2">
+                      {playbook.industryVertical.map((v: string, i: number) => (
+                        <Badge key={i} variant="outline" className="text-xs">{v}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-sm text-gray-600">买家画像</div>
+                    <div className="flex flex-wrap gap-2">
+                      {playbook.buyerPersona.map((v: string, i: number) => (
+                        <Badge key={i} variant="outline" className="text-xs">{v}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">销售阶段</span>
+                    <span className="text-sm">{playbook.dealStage}</span>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-sm text-gray-600">区域/市场</div>
+                    <div className="flex flex-wrap gap-2">
+                      {playbook.region.map((r: string, i: number) => (
+                        <Badge key={i} variant="outline" className="text-xs">{r}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex gap-4 justify-between">
+                    <span className="text-sm text-gray-600">使用权限</span>
+                    <span className="text-sm">{playbook.usageRights}</span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm text-gray-600">备注</span>
+                    <span className="text-sm">{playbook.notes}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="text-xs text-gray-500">关联与扩展</div>
+                <div className="space-y-3">
+                  <div>
+                    <div className="mb-1 text-sm text-gray-600">关联内容</div>
+                    <div className="space-y-1">
+                      {playbook.relatedAssets.map((a: any) => (
+                        <div key={a.id} className="flex justify-between items-center">
+                          <Link href={a.href} className="text-sm font-medium hover:text-primary">{a.title}</Link>
+                          <Badge variant="outline" className="text-xs">{a.id}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-sm text-gray-600">自定义字段</div>
+                    <pre className="overflow-auto p-3 text-xs bg-gray-100 rounded">
+                      {JSON.stringify(playbook.customFields, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           {/* Tags */}
           <Card>
             <CardHeader>
