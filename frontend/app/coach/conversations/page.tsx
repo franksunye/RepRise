@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { mockReps, mockCallRecords, getSignalsByCallId, getBehaviorMetricsByCallId, mockTasks } from '@/data/mock-data';
-import { MessageSquare, Search, Users, Calendar, Clock, Tag, ArrowUpDown, AlertTriangle, Target, BarChart3, FileText } from 'lucide-react';
+import { MessageSquare, Search, Users, Calendar, Clock, Tag, ArrowUpDown, AlertTriangle, Target, BarChart3, FileText, CheckCircle, Wrench } from 'lucide-react';
 
 export default function CoachConversationsPage() {
   const reps = mockReps;
@@ -294,30 +294,74 @@ export default function CoachConversationsPage() {
                 };
                 const severityWeight = (sev: string) => sev === 'high' ? 3 : sev === 'medium' ? 2 : 1;
                 const severityVariant = (sev: string) => sev === 'high' ? 'destructive' : sev === 'medium' ? 'warning' : 'default';
-                const grouped = signals.reduce<Record<string, { count: number; maxSeverity: string }>>((acc, s) => {
+                const isRiskType = (t: string) => (
+                  t === 'event_objection' || t === 'event_no_next_step' || t === 'event_rejection' || t === 'event_delay' || t === 'event_pricing'
+                );
+                const isOppType = (t: string) => (
+                  t === 'event_buying' || t === 'event_schedule'
+                );
+                const groups: Record<string, Array<{ label: string; severity: string }>> = {
+                  行为: [],
+                  风险: [],
+                  机会: [],
+                  服务问题: [],
+                };
+                signals.forEach(s => {
                   const label = labelOf(s.type);
-                  if (!label) return acc;
-                  const key = label;
-                  const current = acc[key];
-                  if (!current) {
-                    acc[key] = { count: 1, maxSeverity: s.severity };
-                  } else {
-                    acc[key] = {
-                      count: current.count + 1,
-                      maxSeverity: severityWeight(s.severity) > severityWeight(current.maxSeverity) ? s.severity : current.maxSeverity,
-                    };
+                  if (!label) return;
+                  if (s.type.startsWith('behavior_')) {
+                    groups['行为'].push({ label, severity: s.severity });
+                  } else if (s.type.startsWith('issue_')) {
+                    groups['服务问题'].push({ label, severity: s.severity });
+                  } else if (isRiskType(s.type)) {
+                    groups['风险'].push({ label, severity: s.severity });
+                  } else if (isOppType(s.type)) {
+                    groups['机会'].push({ label, severity: s.severity });
                   }
-                  return acc;
-                }, {});
-                const entries = Object.entries(grouped);
-                if (entries.length === 0) return null;
+                });
+
+                const renderGroup = (groupName: keyof typeof groups, icon: any, iconClass: string) => {
+                  const items = groups[groupName];
+                  if (!items || items.length === 0) return null;
+                  const aggregated = items.reduce<Record<string, { count: number; maxSeverity: string }>>((acc, it) => {
+                    const cur = acc[it.label];
+                    if (!cur) acc[it.label] = { count: 1, maxSeverity: it.severity };
+                    else acc[it.label] = { count: cur.count + 1, maxSeverity: severityWeight(it.severity) > severityWeight(cur.maxSeverity) ? it.severity : cur.maxSeverity };
+                    return acc;
+                  }, {});
+                  const entries = Object.entries(aggregated).sort((a, b) => {
+                    const wa = severityWeight(a[1].maxSeverity);
+                    const wb = severityWeight(b[1].maxSeverity);
+                    if (wb !== wa) return wb - wa;
+                    return b[1].count - a[1].count;
+                  });
+                  const limit = 3;
+                  const show = entries.slice(0, limit);
+                  const more = entries.length - show.length;
+                  return (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="flex items-center gap-1 text-xs text-gray-600">
+                        {icon}
+                        {groupName}
+                      </span>
+                      {show.map(([label, info]) => (
+                        <Badge key={`${groupName}-${label}`} variant={severityVariant(info.maxSeverity)}>
+                          {label}{info.count > 1 ? info.count : ''}
+                        </Badge>
+                      ))}
+                      {more > 0 && (
+                        <Badge variant="outline">+{more}</Badge>
+                      )}
+                    </div>
+                  );
+                };
+
                 return (
-                  <div className="flex flex-wrap gap-2">
-                    {entries.map(([label, info]) => (
-                      <Badge key={label} variant={severityVariant(info.maxSeverity)}>
-                        {label}{info.count > 1 ? info.count : ''}
-                      </Badge>
-                    ))}
+                  <div className="space-y-2">
+                    {renderGroup('风险', <AlertTriangle className="h-3 w-3 text-orange-600" />, 'text-orange-600')}
+                    {renderGroup('机会', <Target className="h-3 w-3 text-green-600" />, 'text-green-600')}
+                    {renderGroup('行为', <CheckCircle className="h-3 w-3 text-blue-600" />, 'text-blue-600')}
+                    {renderGroup('服务问题', <Wrench className="h-3 w-3 text-gray-600" />, 'text-gray-600')}
                   </div>
                 );
               })()}
