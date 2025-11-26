@@ -101,7 +101,6 @@ export default function CoachConversationDetailPage() {
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedSignalId, setSelectedSignalId] = useState<string | null>(null);
   const selectedSignal = useMemo(() => signals.find(s => s.id === selectedSignalId) || null, [signals, selectedSignalId]);
-  const [hoverTimer, setHoverTimer] = useState<NodeJS.Timeout | null>(null);
   const [playheadMs, setPlayheadMs] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const playIntervalRef = useRef<number | null>(null);
@@ -139,21 +138,6 @@ export default function CoachConversationDetailPage() {
     setSelectedSignalId(id);
     setDetailOpen(true);
     if (signalOffsetMs) setPlayheadMs(signalOffsetMs);
-  };
-
-  const scheduleHoverOpen = (id: string) => {
-    if (hoverTimer) {
-      clearTimeout(hoverTimer);
-    }
-    const t = setTimeout(() => openDetail(id), 350);
-    setHoverTimer(t);
-  };
-
-  const cancelHoverOpen = () => {
-    if (hoverTimer) {
-      clearTimeout(hoverTimer);
-      setHoverTimer(null);
-    }
   };
 
   const contextWindowMs = 20000;
@@ -287,8 +271,6 @@ export default function CoachConversationDetailPage() {
                       key={s.id}
                       className="p-3 rounded-lg border cursor-pointer hover:bg-gray-50"
                       onClick={() => openDetail(s.id)}
-                      onMouseEnter={() => scheduleHoverOpen(s.id)}
-                      onMouseLeave={cancelHoverOpen}
                     >
                       <div className="flex justify-between items-center">
                         <div className="flex gap-2 items-center text-xs text-gray-500">
@@ -322,8 +304,6 @@ export default function CoachConversationDetailPage() {
                       key={s.id}
                       className="p-3 rounded-lg border cursor-pointer hover:bg-gray-50"
                       onClick={() => openDetail(s.id)}
-                      onMouseEnter={() => scheduleHoverOpen(s.id)}
-                      onMouseLeave={cancelHoverOpen}
                     >
                       <div className="flex justify-between items-center">
                         <div className="flex gap-2 items-center text-xs text-gray-500">
@@ -357,8 +337,6 @@ export default function CoachConversationDetailPage() {
                       key={s.id}
                       className="p-3 rounded-lg border cursor-pointer hover:bg-gray-50"
                       onClick={() => openDetail(s.id)}
-                      onMouseEnter={() => scheduleHoverOpen(s.id)}
-                      onMouseLeave={cancelHoverOpen}
                     >
                       <div className="flex justify-between items-center">
                         <div className="flex gap-2 items-center text-xs text-gray-500">
@@ -392,8 +370,6 @@ export default function CoachConversationDetailPage() {
                       key={s.id}
                       className="p-3 rounded-lg border cursor-pointer hover:bg-gray-50"
                       onClick={() => openDetail(s.id)}
-                      onMouseEnter={() => scheduleHoverOpen(s.id)}
-                      onMouseLeave={cancelHoverOpen}
                     >
                       <div className="flex justify-between items-center">
                         <div className="flex gap-2 items-center text-xs text-gray-500">
