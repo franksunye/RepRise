@@ -57,8 +57,10 @@ export const navigation: RoleNavigation = {
     },
     {
       name: '内容中心',
+      href: '/content',
       icon: BookOpen,
       children: [
+        { name: '首页', href: '/content/dashboard', icon: Home },
         { name: '全部内容', href: '/content/all', icon: BookOpen },
         { name: '话术脚本', href: '/content?category=script', icon: MessageSquare },
         { name: '报价模板', href: '/content?category=template', icon: FileText },

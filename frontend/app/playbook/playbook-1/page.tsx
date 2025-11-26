@@ -171,7 +171,7 @@ export default function PlaybookDetailPage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex gap-4 items-center">
-        <Link href="/content">
+        <Link href="/playbook">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -354,7 +354,7 @@ export default function PlaybookDetailPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="text-sm">
-                <Link href="/content/playbook-2" className="font-medium hover:text-primary">
+                <Link href="/playbook/playbook-2" className="font-medium hover:text-primary">
                   上门勘查检查清单
                 </Link>
                 <p className="mt-1 text-xs text-gray-600">勘查 · 检查清单</p>
