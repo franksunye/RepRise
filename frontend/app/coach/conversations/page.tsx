@@ -294,16 +294,10 @@ export default function CoachConversationsPage() {
                 };
                 const severityWeight = (sev: string) => sev === 'high' ? 3 : sev === 'medium' ? 2 : 1;
                 const severityVariant = (sev: string) => sev === 'high' ? 'destructive' : sev === 'medium' ? 'warning' : 'default';
-                const isRiskType = (t: string) => (
-                  t === 'event_objection' || t === 'event_no_next_step' || t === 'event_rejection' || t === 'event_delay' || t === 'event_pricing'
-                );
-                const isOppType = (t: string) => (
-                  t === 'event_buying' || t === 'event_schedule'
-                );
+                const isEventType = (t: string) => t.startsWith('event_');
                 const groups: Record<string, Array<{ label: string; severity: string }>> = {
+                  事件: [],
                   行为: [],
-                  风险: [],
-                  机会: [],
                   服务问题: [],
                 };
                 signals.forEach(s => {
@@ -313,10 +307,8 @@ export default function CoachConversationsPage() {
                     groups['行为'].push({ label, severity: s.severity });
                   } else if (s.type.startsWith('issue_')) {
                     groups['服务问题'].push({ label, severity: s.severity });
-                  } else if (isRiskType(s.type)) {
-                    groups['风险'].push({ label, severity: s.severity });
-                  } else if (isOppType(s.type)) {
-                    groups['机会'].push({ label, severity: s.severity });
+                  } else if (isEventType(s.type)) {
+                    groups['事件'].push({ label, severity: s.severity });
                   }
                 });
 
@@ -358,8 +350,7 @@ export default function CoachConversationsPage() {
 
                 return (
                   <div className="space-y-2">
-                    {renderGroup('风险', <AlertTriangle className="h-3 w-3 text-orange-600" />, 'text-orange-600')}
-                    {renderGroup('机会', <Target className="h-3 w-3 text-green-600" />, 'text-green-600')}
+                    {renderGroup('事件', <MessageSquare className="h-3 w-3 text-violet-600" />, 'text-violet-600')}
                     {renderGroup('行为', <CheckCircle className="h-3 w-3 text-blue-600" />, 'text-blue-600')}
                     {renderGroup('服务问题', <Wrench className="h-3 w-3 text-gray-600" />, 'text-gray-600')}
                   </div>
